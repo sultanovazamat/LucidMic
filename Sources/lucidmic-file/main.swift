@@ -49,7 +49,8 @@ func run() throws -> Int32 {
         print("usage: lucidmic-file <input audio> <output.wav> [model.onnx]")
         return 2
     }
-    let modelPath = args.count == 4 ? args[3] : FileManager.default.currentDirectoryPath + "/build/deps/dpdfnet2_48khz_hr.onnx"
+    let modelPath =
+        args.count == 4 ? args[3] : FileManager.default.currentDirectoryPath + "/build/deps/dpdfnet2_48khz_hr.onnx"
     let routing = LucidRouting(inputBuffer: 0, outputFirstBuffer: 0, outputBufferCount: 1)
     guard let engine = lucid_engine_create(routing, modelPath) else {
         print("could not load model at \(modelPath)")

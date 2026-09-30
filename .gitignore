@@ -18,4 +18,6 @@ bench/data/
 bench/results/
 # Secrets
 .env
+.env.*
+.ruff_cache/
 third_party/

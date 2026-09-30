@@ -1,13 +1,85 @@
-LucidMic includes the following third-party software:
+LucidMic 1.0.0
+Copyright (C) 2026 Azamat Sultanov
+LucidMic source is licensed under GPL-3.0. See LICENSE.
+Source: https://github.com/sultanovazamat/LucidMic
 
-- DPDFNet speech enhancement model (dpdfnet2_48khz_hr) — Ceva Inc., Apache License 2.0
-  https://github.com/ceva-ip/DPDFNet
-- sherpa-onnx — Xiaomi Corporation and k2-fsa contributors, Apache License 2.0
-  https://github.com/k2-fsa/sherpa-onnx
-- ONNX Runtime — Microsoft Corporation, MIT License
-  https://github.com/microsoft/onnxruntime
-- BlackHole virtual audio driver (renamed "LucidMic Microphone") — Existential Audio Inc., GPL-3.0
-  https://github.com/ExistentialAudio/BlackHole (full license: BlackHole-LICENSE.txt)
+This distribution includes:
 
-Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0
-MIT License: https://opensource.org/licenses/MIT
+DPDFNet2 speech enhancement model (dpdfnet2_48khz_hr.onnx)
+  Ceva Inc. — Apache License 2.0
+  Source: https://github.com/ceva-ip/DPDFNet
+  Model: https://github.com/k2-fsa/sherpa-onnx/releases/tag/speech-enhancement-models
+  SHA-256: 0b399f8a58dc4d70d8cd97541f5c39869406145193b957d00a03b66070944928
+  License: Licenses/DPDFNet-Apache-2.0.txt
+
+sherpa-onnx v1.13.8 (C API runtime)
+  Xiaomi Corporation and k2-fsa contributors — Apache License 2.0
+  Source: https://github.com/k2-fsa/sherpa-onnx/tree/v1.13.8
+  License: Licenses/sherpa-onnx-Apache-2.0.txt
+
+ONNX Runtime v1.28.2 (as distributed with sherpa-onnx v1.13.8)
+  Microsoft Corporation — MIT License
+  Source: https://github.com/microsoft/onnxruntime/tree/v1.28.2
+  License: Licenses/onnxruntime-MIT.txt
+  Additional notices: Licenses/onnxruntime-ThirdPartyNotices.txt
+
+BlackHole v0.7.1 (customized as LucidMic Microphone / LucidMic Feed)
+  Existential Audio Inc. — GNU General Public License version 3
+  Source revision: e2b22aaaba4e507a097131704bf96dabc004d9cf
+  Source: https://github.com/ExistentialAudio/BlackHole/tree/v0.7.1
+  License: Licenses/BlackHole-GPL-3.0.txt
+  Changes by Azamat Sultanov, 2026: build-time device names, bundle identifiers,
+  input/output visibility, manufacturer, and plug-in factory UUID. Original C
+  source is unmodified. Exact customization: scripts/build-driver.sh in LucidMic.
+  Corresponding source archive: BlackHole-0.7.1-source.tar.gz, distributed beside
+  the DMG at https://github.com/sultanovazamat/LucidMic/releases/tag/v1.0.0
+
+Additional code embedded in the distributed sherpa-onnx library
+
+The general-purpose runtime also contains TTS and recognition components.
+LucidMic calls its noise-removal API; these embedded components retain their
+original licenses, including GPL-3.0 for eSpeak NG.
+
+kaldi-native-fbank — v1.22.3
+  License/attribution: Licenses/runtime-kaldi-native-fbank-LICENSE.txt
+kissfft — febd4caeed32e33ad8b2e0bb5ea77542c40f18ec
+  License/attribution: Licenses/runtime-kissfft-COPYING.txt
+  License/attribution: Licenses/runtime-kissfft-LICENSES-BSD-3-Clause.txt
+kaldi-decoder — v0.3.0
+  License/attribution: Licenses/runtime-kaldi-decoder-LICENSE.txt
+kaldifst — v1.8.0
+  License/attribution: Licenses/runtime-kaldifst-LICENSE.txt
+openfst — v1.8.5-2026-04-10
+  License/attribution: Licenses/runtime-openfst-COPYING.txt
+simple-sentencepiece — v0.7
+  License/attribution: Licenses/runtime-simple-sentencepiece-LICENSE.txt
+  License/attribution: Licenses/runtime-simple-sentencepiece-darts.h.txt
+  License/attribution: Licenses/runtime-simple-sentencepiece-threadpool.h.txt
+piper-phonemize — f3ff95afc03640bc1399e113e83361192a2fafb4
+  License/attribution: Licenses/runtime-piper-phonemize-LICENSE.md.txt
+  License/attribution: Licenses/runtime-piper-phonemize-licenses-uni-algo-LICENSE.md.txt
+espeak-ng — ed530aa113046142eb5115cf2fc9157854d0ffe1
+  License/attribution: Licenses/runtime-espeak-ng-COPYING.APACHE.txt
+  License/attribution: Licenses/runtime-espeak-ng-COPYING.BSD2.txt
+  License/attribution: Licenses/runtime-espeak-ng-COPYING.UCD.txt
+  License/attribution: Licenses/runtime-espeak-ng-COPYING.txt
+  License/attribution: Licenses/runtime-espeak-ng-Copyright-Notices.txt
+  License/attribution: Licenses/runtime-espeak-ng-src-ucd-tools-AUTHORS.txt
+  License/attribution: Licenses/runtime-espeak-ng-src-ucd-tools-COPYING.UCD.txt
+  License/attribution: Licenses/runtime-espeak-ng-src-ucd-tools-COPYING.txt
+hclust-cpp — 2026-02-25
+  License/attribution: Licenses/runtime-hclust-cpp-LICENSE.txt
+nlohmann-json — v3.12.0
+  License/attribution: Licenses/runtime-nlohmann-json-LICENSE.MIT.txt
+  License/attribution: Licenses/runtime-nlohmann-json-docs-mkdocs-docs-home-license.md.txt
+
+See Runtime-Sources.json for exact revisions, source URLs, and SHA-256 hashes.
+The LucidMic-1.0.0-runtime-source.tar.gz release asset contains those source archives.
+ONNX Runtime v1.28.2 source is separately available from:
+https://github.com/microsoft/onnxruntime/archive/refs/tags/v1.28.2.tar.gz
+Build provenance and required patch: docs/runtime-build.md in the LucidMic repository
+and BUILD.md inside the runtime source archive.
+
+The full license texts and notices above are included in the app's Resources
+directory and in the LucidMic repository. Third-party components retain their
+original licenses and copyright notices.

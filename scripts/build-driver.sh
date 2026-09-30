@@ -6,10 +6,15 @@ set -eu
 cd "$(dirname "$0")/.."
 SRC=build/blackhole-src
 OUT=build/LucidMic.driver
+REVISION=e2b22aaaba4e507a097131704bf96dabc004d9cf
 FACTORY_UUID=3F377EC4-ED4B-4F93-A13A-206FB8B0A1BC  # unique, so it never clashes with a real BlackHole install
 
 [ -d "$SRC" ] || git clone -q --depth 1 --branch v0.7.1 https://github.com/ExistentialAudio/BlackHole.git "$SRC"
+[ "$(git -C "$SRC" rev-parse HEAD)" = "$REVISION" ] || { echo "Unexpected BlackHole revision" >&2; exit 1; }
+[ -z "$(git -C "$SRC" status --porcelain)" ] || { echo "BlackHole source has local modifications" >&2; exit 1; }
 
+# Xcode, not the shell, expands the inherited preprocessor settings.
+# shellcheck disable=SC2016
 xcodebuild -project "$SRC/BlackHole.xcodeproj" -target BlackHole -configuration Release SYMROOT="$PWD/build/blackhole-build" \
     PRODUCT_BUNDLE_IDENTIFIER=com.sultanovazamat.lucidmic.driver CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual \
     DEVELOPMENT_TEAM= ARCHS=arm64 ONLY_ACTIVE_ARCH=NO MACOSX_DEPLOYMENT_TARGET=14.0 \

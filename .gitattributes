@@ -1,0 +1,3 @@
+# Preserve upstream legal texts, including their original whitespace.
+LICENSE -whitespace
+Resources/Licenses/* -whitespace

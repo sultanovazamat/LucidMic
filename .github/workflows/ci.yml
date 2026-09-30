@@ -1,0 +1,30 @@
+name: Build and tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff # v6
+        with:
+          python-version: '3.12'
+      - name: Install ShellCheck
+        run: brew list shellcheck >/dev/null 2>&1 || brew install shellcheck
+      - name: Format, lint, build, and test
+        run: scripts/check.sh
+      - name: Verify release packaging
+        run: scripts/build.sh 1.0.0
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: LucidMic-macOS
+          path: dist/*
+          if-no-files-found: error

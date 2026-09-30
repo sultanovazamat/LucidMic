@@ -1,0 +1,4475 @@
+Sherpa-onnx v1.13.8 source copyright notices
+
+The following notices are preserved from runtime source files.
+
+
+sherpa-onnx/c-api/c-api.cc
+// sherpa-onnx/c-api/c-api.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/c-api/c-api.h
+// sherpa-onnx/c-api/c-api.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+/**
+ * @file c-api.h
+ * @brief Public C API for sherpa-onnx.
+ *
+ * This header exposes the main sherpa-onnx inference features through a stable
+ * C interface. It is intended for native C/C++ applications and for language
+ * bindings that need a C ABI.
+ *
+ * The file is organized by feature family. The major API groups are:
+ *
+ * - Utility helpers: version/build information, file checks, WAVE I/O, and a
+ *   display helper for incremental text output
+ * - Streaming ASR: online recognizers, online streams, endpointing, and
+ *   per-stream runtime options
+ * - Non-streaming ASR: offline recognizers, offline streams, batch decode, and
+ *   result retrieval
+ * - Keyword spotting: streaming keyword detection, custom keyword streams, and
+ *   keyword result snapshots
+ * - Voice activity detection: Silero/Ten VAD models, speech segment buffers,
+ *   and detector state management
+ * - Text-to-speech: offline TTS model families, generation configuration, and
+ *   generated audio helpers
+ * - Spoken language identification
+ * - Speaker embedding extraction and speaker enrollment/search/verification
+ * - Audio tagging
+ * - Offline and online punctuation restoration
+ * - Linear resampling
+ * - Offline speaker diarization
+ * - Offline and online speech enhancement / denoising
+ * - HarmonyOS-specific constructor variants
+ *
+ * Common ownership rules:
+ *
+ * - Opaque handles created by `SherpaOnnxCreate*()` functions are generally
+ *   destroyed with a matching `SherpaOnnxDestroy*()` function
+ * - Snapshot/result objects returned by query functions usually need explicit
+ *   destruction as documented on each API
+ * - Strings or arrays returned by helper/query functions are either:
+ *   - statically owned by the library and must not be freed, or
+ *   - heap-allocated for the caller and must be released with the matching
+ *     `Free`/`Destroy` API
+ *
+ * General usage pattern:
+ *
+ * 1. Zero-initialize a config struct with `memset(&config, 0, sizeof(config))`
+ * 2. Fill in the required model paths and runtime options
+ * 3. Create the corresponding engine with `SherpaOnnxCreate*()`
+ * 4. Create a stream if the feature uses one
+ * 5. Feed audio or text, run the compute/decode API, and retrieve results
+ * 6. Release every returned object with the documented matching API
+ *
+ * The examples in `c-api-examples/` show complete end-to-end usage. Useful
+ * starting points include:
+ *
+ * - `decode-file-c-api.c` for ASR
+ * - `kws-c-api.c` for keyword spotting
+ * - `vad-whisper-c-api.c` for VAD
+ * - `offline-tts-c-api.c` and `kokoro-tts-en-c-api.c` for TTS
+ * - `speaker-identification-c-api.c` for speaker embedding and verification
+ * - `audio-tagging-c-api.c` for audio tagging
+ * - `add-punctuation-c-api.c` and `add-punctuation-online-c-api.c` for
+ *   punctuation
+ * - `offline-sepaker-diarization-c-api.c` for diarization
+ * - `speech-enhancement-gtcrn-c-api.c` and
+ *   `online-speech-enhancement-gtcrn-c-api.c` for speech enhancement
+ */
+
+
+sherpa-onnx/c-api/cxx-api.cc
+// sherpa-onnx/c-api/cxx-api.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/c-api/cxx-api.h
+// sherpa-onnx/c-api/cxx-api.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+/**
+ * @file cxx-api.h
+ * @brief Public C++ wrapper for the sherpa-onnx C API.
+ *
+ * This header provides a lightweight C++ interface on top of `c-api.h`. The
+ * wrapper follows a few simple design rules:
+ *
+ * - Configuration objects are plain structs with `std::string`,
+ *   `std::vector`, and default values
+ * - Runtime handles are move-only RAII classes that automatically release the
+ *   underlying C handle
+ * - Result objects are copied into standard C++ containers so callers do not
+ *   need to manage C-allocated memory manually
+ * - The API mirrors the C API closely, while offering a more idiomatic C++
+ *   surface
+ *
+ * Major feature families available in this file:
+ *
+ * - Streaming ASR
+ * - Non-streaming ASR
+ * - Non-streaming TTS
+ * - Keyword spotting
+ * - Offline and online speech enhancement
+ * - VAD and circular buffering
+ * - Linear resampling
+ * - Version/file/WAVE helpers
+ * - Offline and online punctuation
+ * - Audio tagging
+ *
+ * Typical usage pattern:
+ *
+ * 1. Fill a config struct
+ * 2. Create the corresponding RAII wrapper with `Class::Create(...)`
+ * 3. Check `wrapper.Get()` for success
+ * 4. Feed audio or text, run inference, and retrieve results as C++ objects
+ * 5. Let destructors clean up automatically
+ *
+ * Example programs are available in `cxx-api-examples/` and show concrete model
+ * packages and end-to-end usage.
+ */
+
+
+sherpa-onnx/csrc/alsa-play.cc
+// sherpa-onnx/csrc/alsa-play.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/alsa-play.h
+// sherpa-onnx/csrc/alsa-play.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/alsa.cc
+// sherpa-onnx/csrc/sherpa-alsa.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/alsa.h
+// sherpa-onnx/csrc/sherpa-alsa.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/ascend/macros.h
+// sherpa-onnx/csrc/ascend/macros.h
+//
+// Copyright      2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/ascend/offline-paraformer-model-ascend.cc
+// sherpa-onnx/csrc/ascend/offline-paraformer-model-ascend.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+// References:
+// https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/83RC1alpha003/API/appdevgapi/aclcppdevg_03_0298.html
+
+
+sherpa-onnx/csrc/ascend/offline-paraformer-model-ascend.h
+// sherpa-onnx/csrc/ascend/offline-paraformer-model-ascend.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/ascend/offline-recognizer-zipformer-ctc-ascend-impl.h
+// sherpa-onnx/csrc/ascend/offline-recognizer-zipformer-ctc-ascend-impl.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/ascend/offline-sense-voice-model-ascend.cc
+// sherpa-onnx/csrc/ascend/offline-sense-voice-model-ascend.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+// References:
+// https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/83RC1alpha003/API/appdevgapi/aclcppdevg_03_0298.html
+
+
+sherpa-onnx/csrc/ascend/offline-sense-voice-model-ascend.h
+// sherpa-onnx/csrc/ascend/offline-sense-voice-model-ascend.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/ascend/offline-whisper-model-ascend.cc
+// sherpa-onnx/csrc/ascend/offline-whisper-model-ascend.cc
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/ascend/offline-whisper-model-ascend.h
+// sherpa-onnx/csrc/ascend/offline-whisper-model-ascend.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/ascend/offline-zipformer-ctc-model-ascend.cc
+// sherpa-onnx/csrc/ascend/offline-zipformer-ctc-model-ascend.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+// References:
+// https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/83RC1alpha003/API/appdevgapi/aclcppdevg_03_0298.html
+
+
+sherpa-onnx/csrc/ascend/offline-zipformer-ctc-model-ascend.h
+// sherpa-onnx/csrc/ascend/offline-zipformer-ctc-model-ascend.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/ascend/utils.cc
+// sherpa-onnx/csrc/ascend/utils.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/ascend/utils.h
+// sherpa-onnx/csrc/ascend/utils.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/audio-tagging-ced-impl.h
+// sherpa-onnx/csrc/audio-tagging-ced-impl.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/audio-tagging-impl.cc
+// sherpa-onnx/csrc/audio-tagging-impl.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/audio-tagging-impl.h
+// sherpa-onnx/csrc/audio-tagging-impl.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/audio-tagging-label-file.cc
+// sherpa-onnx/csrc/audio-tagging-label-file.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/audio-tagging-label-file.h
+// sherpa-onnx/csrc/audio-tagging-label-file.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/audio-tagging-model-config.cc
+// sherpa-onnx/csrc/audio-tagging-model-config.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/audio-tagging-model-config.h
+// sherpa-onnx/csrc/audio-tagging-model-config.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/audio-tagging-zipformer-impl.h
+// sherpa-onnx/csrc/audio-tagging-zipformer-impl.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/audio-tagging.cc
+// sherpa-onnx/csrc/audio-tagging.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/audio-tagging.h
+// sherpa-onnx/csrc/audio-tagging.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/axcl/axcl-engine-guard.cc
+// sherpa-onnx/csrc/axcl/axcl-engine-guard.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/axcl/axcl-engine-guard.h
+// sherpa-onnx/csrc/axcl/axcl-engine-guard.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/axcl/axcl-engine-io-guard.cc
+// sherpa-onnx/csrc/axcl/axcl-engine-io-guard.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/axcl/axcl-engine-io-guard.h
+// sherpa-onnx/csrc/axcl/axcl-engine-io-guard.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/axcl/axcl-engine-io-info-guard.cc
+// sherpa-onnx/csrc/axcl/axcl-engine-io-info-guard.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/axcl/axcl-engine-io-info-guard.h
+// sherpa-onnx/csrc/axcl/axcl-engine-io-info-guard.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/axcl/axcl-manager.cc
+// sherpa-onnx/csrc/axcl/axcl-manager.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/axcl/axcl-manager.h
+// sherpa-onnx/csrc/axcl/axcl-manager.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/axcl/axcl-model.cc
+// sherpa-onnx/csrc/axcl/axcl-model.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/axcl/axcl-model.h
+// sherpa-onnx/csrc/axcl/axcl-model.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/axcl/offline-sense-voice-model-axcl.cc
+// sherpa-onnx/csrc/axcl/offline-sense-voice-model-axcl.cc
+//
+// Copyright (c)  2025  M5Stack Technology CO LTD
+
+
+sherpa-onnx/csrc/axcl/offline-sense-voice-model-axcl.h
+// sherpa-onnx/csrc/axcl/offline-sense-voice-model-axcl.h
+//
+// Copyright (c)  2025  M5Stack Technology CO LTD
+
+
+sherpa-onnx/csrc/axcl/utils.cc
+// sherpa-onnx/csrc/axcl/utils.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/axcl/utils.h
+// sherpa-onnx/csrc/axcl/utils.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/axera/ax-engine-guard.cc
+// sherpa-onnx/csrc/axera/ax-engine-guard.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/axera/ax-engine-guard.h
+// sherpa-onnx/csrc/axera/ax-engine-guard.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/axera/offline-sense-voice-model-axera.cc
+// sherpa-onnx/csrc/axera/offline-sense-voice-model-axera.cc
+//
+// Copyright (c)  2025  M5Stack Technology CO LTD
+
+
+sherpa-onnx/csrc/axera/offline-sense-voice-model-axera.h
+// sherpa-onnx/csrc/axera/offline-sense-voice-model-axera.h
+//
+// Copyright (c)  2025  M5Stack Technology CO LTD
+
+
+sherpa-onnx/csrc/axera/utils.cc
+// sherpa-onnx/csrc/axera/utils.cc
+//
+// Copyright (c)  2025  M5Stack Technology CO LTD
+
+
+sherpa-onnx/csrc/axera/utils.h
+// sherpa-onnx/csrc/axera/utils.h
+//
+// Copyright (c)  2025  M5Stack Technology CO LTD
+
+
+sherpa-onnx/csrc/base64-decode.cc
+// sherpa-onnx/csrc/base64-decode.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/base64-decode.h
+// sherpa-onnx/csrc/base64-decode.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/bbpe.cc
+// sherpa-onnx/csrc/bbpe.cc
+//
+// Copyright (c)  2024 Xiaomi Corporation
+
+// Auto-generated! DO NOT EDIT
+
+
+sherpa-onnx/csrc/bbpe.h
+// sherpa-onnx/csrc/bbpe.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/cat-test.cc
+// sherpa-onnx/csrc/cat-test.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/cat.cc
+// sherpa-onnx/csrc/cat.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/cat.h
+// sherpa-onnx/csrc/cat.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/character-lexicon.cc
+// sherpa-onnx/csrc/character-lexicon.cc
+//
+// Copyright (c)  2022-2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/character-lexicon.h
+// sherpa-onnx/csrc/character-lexicon.h
+//
+// Copyright (c)  2022-2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/circular-buffer-test.cc
+// sherpa-onnx/csrc/circular-buffer-test.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/circular-buffer.cc
+// sherpa-onnx/csrc/circular-buffer.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/circular-buffer.h
+// sherpa-onnx/csrc/circular-buffer.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/context-graph-test.cc
+// sherpa-onnx/csrc/context-graph-test.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/context-graph.cc
+// sherpa-onnx/csrc/context-graph.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/context-graph.h
+// sherpa-onnx/csrc/context-graph.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/display.h
+// sherpa-onnx/csrc/display.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/endpoint.cc
+// sherpa-onnx/csrc/endpoint.cc
+//
+// Copyright (c)  2022  (authors: Pingfeng Luo)
+//                2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/endpoint.h
+// sherpa-onnx/csrc/endpoint.h
+//
+// Copyright (c)  2022  (authors: Pingfeng Luo)
+//                2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/fast-clustering-config.cc
+// sherpa-onnx/csrc/fast-clustering-config.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/fast-clustering-config.h
+// sherpa-onnx/csrc/fast-clustering-config.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/fast-clustering-test.cc
+// sherpa-onnx/csrc/fast-clustering-test.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/fast-clustering.cc
+// sherpa-onnx/csrc/fast-clustering.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/fast-clustering.h
+// sherpa-onnx/csrc/fast-clustering.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/features.cc
+// sherpa-onnx/csrc/features.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/features.h
+// sherpa-onnx/csrc/features.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/file-utils.cc
+// sherpa-onnx/csrc/file-utils.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/file-utils.h
+// sherpa-onnx/csrc/file-utils.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/fst-utils.cc
+// sherpa-onnx/csrc/fst-utils.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/fst-utils.h
+// sherpa-onnx/csrc/fst-utils.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/funasr-nano-tokenizer.cc
+// sherpa-onnx/csrc/funasr-nano-tokenizer.cc
+//
+// Copyright (c)  2025  zengyw
+
+
+sherpa-onnx/csrc/funasr-nano-tokenizer.h
+// sherpa-onnx/csrc/funasr-nano-tokenizer.h
+//
+// Copyright (c)  2025  zengyw
+//
+// A self-contained Qwen3 ByteLevel-BPE tokenizer implementation.
+// - No dependency on tokenizers-cpp / HF tokenizers
+// - Loads vocab.json + merges.txt + tokenizer.json(added_tokens)
+// - Supports AddedTokens via Trie longest-match
+// - ByteLevel bytes_to_unicode encode/decode
+
+
+sherpa-onnx/csrc/hifigan-vocoder.cc
+// sherpa-onnx/csrc/hifigan-vocoder.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/hifigan-vocoder.h
+// sherpa-onnx/csrc/hifigan-vocoder.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/homophone-replacer.cc
+// sherpa-onnx/csrc/homophone-replacer.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/homophone-replacer.h
+// sherpa-onnx/csrc/homophone-replacer.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/hypothesis.cc
+/**
+ * Copyright (c)  2023  Xiaomi Corporation
+ * Copyright (c)  2023  Pingfeng Luo
+ */
+
+
+sherpa-onnx/csrc/hypothesis.h
+/**
+ * Copyright (c)  2023  Xiaomi Corporation
+ * Copyright (c)  2023  Pingfeng Luo
+ *
+ */
+
+
+sherpa-onnx/csrc/keyword-spotter-impl.cc
+// sherpa-onnx/csrc/keyword-spotter-impl.cc
+//
+// Copyright (c)  2023-2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/keyword-spotter-impl.h
+// sherpa-onnx/csrc/keyword-spotter-impl.h
+//
+// Copyright (c)  2023-2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/keyword-spotter-transducer-impl.h
+// sherpa-onnx/csrc/keyword-spotter-transducer-impl.h
+//
+// Copyright (c)  2023-2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/keyword-spotter.cc
+// sherpa-onnx/csrc/keyword-spotter.cc
+//
+// Copyright (c)  2023-2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/keyword-spotter.h
+// sherpa-onnx/csrc/keyword-spotter.h
+//
+// Copyright (c)  2023-2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/kokoro-multi-lang-lexicon.cc
+// sherpa-onnx/csrc/kokoro-multi-lang-lexicon.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/kokoro-multi-lang-lexicon.h
+// sherpa-onnx/csrc/kokoro-multi-lang-lexicon.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/lexicon.cc
+// sherpa-onnx/csrc/lexicon.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/lexicon.h
+// sherpa-onnx/csrc/lexicon.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/lfr-test.cc
+// sherpa-onnx/csrc/lfr-test.cc
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/lfr.cc
+// sherpa-onnx/csrc/lfr.cc
+//
+// Copyright (c)  2026  zhifu gao
+
+
+sherpa-onnx/csrc/lfr.h
+// sherpa-onnx/csrc/lfr.h
+//
+// Copyright (c)  2026  zhifu gao
+
+
+sherpa-onnx/csrc/lodr-fst.cc
+// sherpa-onnx/csrc/lodr-fst.cc
+//
+// Contains code copied from icefall/utils/ngram_lm.py
+// Copyright (c)  2023 Xiaomi Corporation
+//
+// Copyright (c)  2025 Tilde SIA (Askars Salimbajevs)
+
+
+sherpa-onnx/csrc/lodr-fst.h
+// sherpa-onnx/csrc/lodr-fst.h
+//
+// Contains code copied from icefall/utils/ngram_lm.py
+// Copyright (c)  2023 Xiaomi Corporation
+//
+// Copyright (c)  2025 Tilde SIA (Askars Salimbajevs)
+
+
+sherpa-onnx/csrc/log.cc
+// sherpa-onnx/csrc/log.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/log.h
+// sherpa-onnx/csrc/log.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/macros.h
+// sherpa-onnx/csrc/macros.h
+//
+// Copyright      2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/matcha-tts-lexicon.cc
+// sherpa-onnx/csrc/matcha-tts-lexicon.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/matcha-tts-lexicon.h
+// sherpa-onnx/csrc/matcha-tts-lexicon.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/math-test.cc
+// sherpa-onnx/csrc/math-test.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/math.cc
+// sherpa-onnx/csrc/math.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/math.h
+/**
+ * Copyright (c)  2022  Xiaomi Corporation (authors: Daniel Povey)
+ * Copyright (c)  2023                     (Pingfeng Luo)
+ *
+ */
+// This file is copied from k2/csrc/utils.h
+
+
+sherpa-onnx/csrc/melo-tts-lexicon.cc
+// sherpa-onnx/csrc/melo-tts-lexicon.cc
+//
+// Copyright (c)  2022-2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/melo-tts-lexicon.h
+// sherpa-onnx/csrc/melo-tts-lexicon.h
+//
+// Copyright (c)  2022-2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/microphone.cc
+// sherpa-onnx/csrc/microphone.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/microphone.h
+// sherpa-onnx/csrc/microphone.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/normal-data-generator.cc
+// sherpa-onnx/csrc/normal-data-generator.cc
+//
+// Copyright      2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/normal-data-generator.h
+// sherpa-onnx/csrc/normal-data-generator.h
+//
+// Copyright      2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-canary-model-config.cc
+// sherpa-onnx/csrc/offline-canary-model-config.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-canary-model-config.h
+// sherpa-onnx/csrc/offline-canary-model-config.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-canary-model-meta-data.h
+// sherpa-onnx/csrc/offline-canary-model-meta-data.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-canary-model.cc
+// sherpa-onnx/csrc/offline-canary-model.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-canary-model.h
+// sherpa-onnx/csrc/offline-canary-model.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-catt-model.cc
+// sherpa-onnx/csrc/offline-catt-model.cc
+//
+// Copyright (c)  2026  Matias Lin
+
+
+sherpa-onnx/csrc/offline-catt-model.h
+// sherpa-onnx/csrc/offline-catt-model.h
+//
+// Copyright (c)  2026  Matias Lin
+
+
+sherpa-onnx/csrc/offline-ced-model.cc
+// sherpa-onnx/csrc/offline-ced-model.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-ced-model.h
+// sherpa-onnx/csrc/offline-ced-model.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-cohere-transcribe-decoder.h
+// sherpa-onnx/csrc/offline-cohere-transcribe-decoder.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-cohere-transcribe-greedy-search-decoder.cc
+// sherpa-onnx/csrc/offline-cohere-transcribe-greedy-search-decoder.cc
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-cohere-transcribe-greedy-search-decoder.h
+// sherpa-onnx/csrc/offline-cohere-transcribe-greedy-search-decoder.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-cohere-transcribe-model-config.cc
+// sherpa-onnx/csrc/offline-cohere-transcribe-model-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-cohere-transcribe-model-config.h
+// sherpa-onnx/csrc/offline-cohere-transcribe-model-config.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-cohere-transcribe-model.cc
+// sherpa-onnx/csrc/offline-cohere-transcribe-model.cc
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-cohere-transcribe-model.h
+// sherpa-onnx/csrc/offline-cohere-transcribe-model.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-ct-transformer-model-meta-data.h
+// sherpa-onnx/csrc/offline-ct-transformer-model-meta-data.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-ct-transformer-model.cc
+// sherpa-onnx/csrc/offline-ct-transformer-model.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-ct-transformer-model.h
+// sherpa-onnx/csrc/offline-ct-transformer-model.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-ctc-decoder.h
+// sherpa-onnx/csrc/offline-ctc-decoder.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-ctc-fst-decoder-config.cc
+// sherpa-onnx/csrc/offline-ctc-fst-decoder-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-ctc-fst-decoder-config.h
+// sherpa-onnx/csrc/offline-ctc-fst-decoder-config.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-ctc-fst-decoder.cc
+// sherpa-onnx/csrc/offline-ctc-fst-decoder.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-ctc-fst-decoder.h
+// sherpa-onnx/csrc/offline-ctc-fst-decoder.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-ctc-greedy-search-decoder.cc
+// sherpa-onnx/csrc/offline-ctc-greedy-search-decoder.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-ctc-model.cc
+// sherpa-onnx/csrc/offline-ctc-model.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-ctc-model.h
+// sherpa-onnx/csrc/offline-ctc-model.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-diacritization-catt-impl.h
+// sherpa-onnx/csrc/offline-diacritization-catt-impl.h
+//
+// Copyright (c)  2026  Matias Lin
+
+
+sherpa-onnx/csrc/offline-diacritization-impl.cc
+// sherpa-onnx/csrc/offline-diacritization-impl.cc
+//
+// Copyright (c)  2026  Matias Lin
+
+
+sherpa-onnx/csrc/offline-diacritization-impl.h
+// sherpa-onnx/csrc/offline-diacritization-impl.h
+//
+// Copyright (c)  2026  Matias Lin
+
+
+sherpa-onnx/csrc/offline-diacritization-model-config.cc
+// sherpa-onnx/csrc/offline-diacritization-model-config.cc
+//
+// Copyright (c)  2026  Matias Lin
+
+
+sherpa-onnx/csrc/offline-diacritization-model-config.h
+// sherpa-onnx/csrc/offline-diacritization-model-config.h
+//
+// Copyright (c)  2026  Matias Lin
+
+
+sherpa-onnx/csrc/offline-diacritization.cc
+// sherpa-onnx/csrc/offline-diacritization.cc
+//
+// Copyright (c)  2026  Matias Lin
+
+
+sherpa-onnx/csrc/offline-diacritization.h
+// sherpa-onnx/csrc/offline-diacritization.h
+//
+// Copyright (c)  2026  Matias Lin
+
+
+sherpa-onnx/csrc/offline-dolphin-model-config.cc
+// sherpa-onnx/csrc/offline-dolphin-model-config.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-dolphin-model-config.h
+// sherpa-onnx/csrc/offline-dolphin-model-config.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-dolphin-model-meta-data.h
+// sherpa-onnx/csrc/offline-dolphin-model-meta-data.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-dolphin-model.cc
+// sherpa-onnx/csrc/offline-dolphin-model.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-dolphin-model.h
+// sherpa-onnx/csrc/offline-dolphin-model.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-fire-red-asr-ctc-model-config.cc
+// sherpa-onnx/csrc/offline-fire-red-asr-ctc-model-config.cc
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-fire-red-asr-ctc-model-config.h
+// sherpa-onnx/csrc/offline-fire-red-asr-ctc-model-config.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-fire-red-asr-ctc-model.cc
+// sherpa-onnx/csrc/offline-fire-red-asr-ctc-model.cc
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-fire-red-asr-ctc-model.h
+// sherpa-onnx/csrc/offline-fire-red-asr-ctc-model.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-fire-red-asr-decoder.h
+// sherpa-onnx/csrc/offline-fire-red-asr-decoder.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-fire-red-asr-greedy-search-decoder.cc
+// sherpa-onnx/csrc/offline-fire-red-asr-greedy-search-decoder.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-fire-red-asr-greedy-search-decoder.h
+// sherpa-onnx/csrc/offline-fire-red-asr-greedy-search-decoder.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-fire-red-asr-model-config.cc
+// sherpa-onnx/csrc/offline-fire-red-asr-model-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-fire-red-asr-model-config.h
+// sherpa-onnx/csrc/offline-fire-red-asr-model-config.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-fire-red-asr-model-meta-data.h
+// sherpa-onnx/csrc/offline-fire-red-asr-model-meta-data.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-fire-red-asr-model.cc
+// sherpa-onnx/csrc/offline-fire-red-asr-model.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-fire-red-asr-model.h
+// sherpa-onnx/csrc/offline-fire-red-asr-model.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-funasr-nano-model-config.cc
+// sherpa-onnx/csrc/offline-funasr-nano-model-config.cc
+//
+// Copyright (c)  2025  zengyw
+
+
+sherpa-onnx/csrc/offline-funasr-nano-model-config.h
+// sherpa-onnx/csrc/offline-funasr-nano-model-config.h
+//
+// Copyright (c)  2025  zengyw
+
+
+sherpa-onnx/csrc/offline-funasr-nano-model.cc
+// sherpa-onnx/csrc/offline-funasr-nano-model.cc
+//
+// Copyright (c)  2025  zengyw
+
+
+sherpa-onnx/csrc/offline-funasr-nano-model.h
+// sherpa-onnx/csrc/offline-funasr-nano-model.h
+//
+// Copyright (c)  2025  zengyw
+
+
+sherpa-onnx/csrc/offline-lm-config.cc
+// sherpa-onnx/csrc/offline-lm-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-lm-config.h
+// sherpa-onnx/csrc/offline-lm-config.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-lm.cc
+// sherpa-onnx/csrc/offline-lm.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-lm.h
+// sherpa-onnx/csrc/offline-lm.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-medasr-ctc-model-config.cc
+// sherpa-onnx/csrc/offline-medasr-ctc-model-config.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-medasr-ctc-model-config.h
+// sherpa-onnx/csrc/offline-medasr-ctc-model-config.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-medasr-ctc-model.cc
+// sherpa-onnx/csrc/offline-medasr-ctc-model.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-medasr-ctc-model.h
+// sherpa-onnx/csrc/offline-medasr-ctc-model.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-model-config.cc
+// sherpa-onnx/csrc/offline-model-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-model-config.h
+// sherpa-onnx/csrc/offline-model-config.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-moonshine-decoder.h
+// sherpa-onnx/csrc/offline-moonshine-decoder.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-moonshine-greedy-search-decoder.cc
+// sherpa-onnx/csrc/offline-moonshine-greedy-search-decoder.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-moonshine-greedy-search-decoder.h
+// sherpa-onnx/csrc/offline-moonshine-greedy-search-decoder.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-moonshine-model-config.cc
+// sherpa-onnx/csrc/offline-moonshine-model-config.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-moonshine-model-config.h
+// sherpa-onnx/csrc/offline-moonshine-model-config.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-moonshine-model-v2.cc
+// sherpa-onnx/csrc/offline-moonshine-model-v2.cc
+//
+// Copyright (c)  2024-2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-moonshine-model-v2.h
+// sherpa-onnx/csrc/offline-moonshine-model-v2.h
+//
+// Copyright (c)  2024-2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-moonshine-model.cc
+// sherpa-onnx/csrc/offline-moonshine-model.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-moonshine-model.h
+// sherpa-onnx/csrc/offline-moonshine-model.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-moonshine-v2-greedy-search-decoder.cc
+// sherpa-onnx/csrc/offline-moonshine-v2-greedy-search-decoder.cc
+//
+// Copyright (c)  2024-2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-moonshine-v2-greedy-search-decoder.h
+// sherpa-onnx/csrc/offline-moonshine-v2-greedy-search-decoder.h
+//
+// Copyright (c)  2024-2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-nemo-enc-dec-ctc-model-config.cc
+// sherpa-onnx/csrc/offline-nemo-enc-dec-ctc-model-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-nemo-enc-dec-ctc-model-config.h
+// sherpa-onnx/csrc/offline-nemo-enc-dec-ctc-model-config.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-nemo-enc-dec-ctc-model.cc
+// sherpa-onnx/csrc/offline-nemo-enc-dec-ctc-model.cc
+//
+// Copyright (c)  2023-2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-nemo-enc-dec-ctc-model.h
+// sherpa-onnx/csrc/offline-nemo-enc-dec-ctc-model.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-omnilingual-asr-ctc-model-config.cc
+// sherpa-onnx/csrc/offline-omnilingual-asr-ctc-model-config.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-omnilingual-asr-ctc-model-config.h
+// sherpa-onnx/csrc/offline-omnilingual-asr-ctc-model-config.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-omnilingual-asr-ctc-model.cc
+// sherpa-onnx/csrc/offline-omnilingual-asr-ctc-model.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-omnilingual-asr-ctc-model.h
+// sherpa-onnx/csrc/offline-omnilingual-asr-ctc-model.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-paraformer-decoder.h
+// sherpa-onnx/csrc/offline-paraformer-decoder.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-paraformer-greedy-search-decoder.cc
+// sherpa-onnx/csrc/offline-paraformer-greedy-search-decoder.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-paraformer-greedy-search-decoder.h
+// sherpa-onnx/csrc/offline-paraformer-greedy-search-decoder.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-paraformer-model-config.cc
+// sherpa-onnx/csrc/offline-paraformer-model-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-paraformer-model-config.h
+// sherpa-onnx/csrc/offline-paraformer-model-config.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-paraformer-model.cc
+// sherpa-onnx/csrc/offline-paraformer-model.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-paraformer-model.h
+// sherpa-onnx/csrc/offline-paraformer-model.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-punctuation-ct-transformer-impl.h
+// sherpa-onnx/csrc/offline-punctuation-ct-transformer-impl.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-punctuation-impl.cc
+// sherpa-onnx/csrc/offline-punctuation-impl.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-punctuation-impl.h
+// sherpa-onnx/csrc/offline-punctuation-impl.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-punctuation-model-config.cc
+// sherpa-onnx/csrc/offline-punctuation-model-config.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-punctuation-model-config.h
+// sherpa-onnx/csrc/offline-punctuation-model-config.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-punctuation.cc
+// sherpa-onnx/csrc/offline-punctuation.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-punctuation.h
+// sherpa-onnx/csrc/offline-punctuation.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-qwen3-asr-model-config.cc
+// sherpa-onnx/csrc/offline-qwen3-asr-model-config.cc
+//
+// Copyright (c)  2026  zengyw
+
+
+sherpa-onnx/csrc/offline-qwen3-asr-model-config.h
+// sherpa-onnx/csrc/offline-qwen3-asr-model-config.h
+//
+// Copyright (c)  2026  zengyw
+
+
+sherpa-onnx/csrc/offline-qwen3-asr-model.cc
+// sherpa-onnx/csrc/offline-qwen3-asr-model.cc
+//
+// Copyright (c)  2026  zengyw
+
+
+sherpa-onnx/csrc/offline-qwen3-asr-model.h
+// sherpa-onnx/csrc/offline-qwen3-asr-model.h
+//
+// Copyright (c)  2026  zengyw
+
+
+sherpa-onnx/csrc/offline-recognizer-canary-impl-test.cc
+// sherpa-onnx/csrc/offline-recognizer-canary-impl-test.cc
+//
+// Copyright (c)  2026  kyo-zzz
+
+
+sherpa-onnx/csrc/offline-recognizer-canary-impl.h
+// sherpa-onnx/csrc/offline-recognizer-canary-impl.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-recognizer-cohere-transcribe-impl-test.cc
+// sherpa-onnx/csrc/offline-recognizer-cohere-transcribe-impl-test.cc
+//
+// Copyright (c)  2026  kyo-zzz
+
+
+sherpa-onnx/csrc/offline-recognizer-cohere-transcribe-impl.h
+// sherpa-onnx/csrc/offline-recognizer-cohere-transcribe-impl.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-recognizer-ctc-impl.h
+// sherpa-onnx/csrc/offline-recognizer-ctc-impl.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-recognizer-fire-red-asr-impl.h
+// sherpa-onnx/csrc/offline-recognizer-fire-red-asr-impl.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-recognizer-funasr-nano-impl-test.cc
+// sherpa-onnx/csrc/offline-recognizer-funasr-nano-impl-test.cc
+//
+// Copyright (c)  2026  kyo-zzz
+
+
+sherpa-onnx/csrc/offline-recognizer-funasr-nano-impl.cc
+// sherpa-onnx/csrc/offline-recognizer-funasr-nano-impl.cc
+//
+// Copyright (c)  2025  zengyw
+
+
+sherpa-onnx/csrc/offline-recognizer-funasr-nano-impl.h
+// sherpa-onnx/csrc/offline-recognizer-funasr-nano-impl.h
+//
+// Copyright (c)  2025  zengyw
+
+
+sherpa-onnx/csrc/offline-recognizer-impl.cc
+// sherpa-onnx/csrc/offline-recognizer-impl.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-recognizer-impl.h
+// sherpa-onnx/csrc/offline-recognizer-impl.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-recognizer-moonshine-impl.h
+// sherpa-onnx/csrc/offline-recognizer-moonshine-impl.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-recognizer-moonshine-v2-impl-test.cc
+// sherpa-onnx/csrc/offline-recognizer-moonshine-v2-impl-test.cc
+//
+// Copyright (c)  2026  kyo-zzz
+
+
+sherpa-onnx/csrc/offline-recognizer-moonshine-v2-impl.h
+// sherpa-onnx/csrc/offline-recognizer-moonshine-v2-impl.h
+//
+// Copyright (c)  2024-2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-recognizer-paraformer-impl.h
+// sherpa-onnx/csrc/offline-recognizer-paraformer-impl.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-recognizer-paraformer-tpl-impl.h
+// sherpa-onnx/csrc/offline-recognizer-paraformer-tpl-impl.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-recognizer-qwen3-asr-impl-test.cc
+// sherpa-onnx/csrc/offline-recognizer-qwen3-asr-impl-test.cc
+//
+// Copyright (c)  2026  fra-shipper
+
+
+sherpa-onnx/csrc/offline-recognizer-qwen3-asr-impl.cc
+// sherpa-onnx/csrc/offline-recognizer-qwen3-asr-impl.cc
+//
+// Copyright (c)  2026 zengyw
+
+
+sherpa-onnx/csrc/offline-recognizer-qwen3-asr-impl.h
+// sherpa-onnx/csrc/offline-recognizer-qwen3-asr-impl.h
+//
+// Copyright (c)  2026   zengyw
+
+
+sherpa-onnx/csrc/offline-recognizer-sense-voice-impl.h
+// sherpa-onnx/csrc/offline-recognizer-sense-voice-impl.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-recognizer-sense-voice-tpl-impl.h
+// sherpa-onnx/csrc/offline-recognizer-sense-voice-tpl-impl.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-recognizer-shared-rng-test.cc
+// sherpa-onnx/csrc/offline-recognizer-shared-rng-test.cc
+//
+// Copyright (c)  2026  fra-shipper
+
+
+sherpa-onnx/csrc/offline-recognizer-transducer-impl.h
+// sherpa-onnx/csrc/offline-recognizer-transducer-impl.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-recognizer-transducer-nemo-impl.h
+// sherpa-onnx/csrc/offline-recognizer-transducer-nemo-impl.h
+//
+// Copyright (c)  2022-2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-recognizer-whisper-impl.h
+// sherpa-onnx/csrc/offline-recognizer-whisper-impl.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-recognizer-whisper-tpl-impl.h
+// sherpa-onnx/csrc/offline-recognizer-whisper-tpl-impl.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-recognizer.cc
+// sherpa-onnx/csrc/offline-recognizer.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-recognizer.h
+// sherpa-onnx/csrc/offline-recognizer.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-rnn-lm.cc
+// sherpa-onnx/csrc/offline-rnn-lm.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-rnn-lm.h
+// sherpa-onnx/csrc/offline-rnn-lm.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-sense-voice-model-config.cc
+// sherpa-onnx/csrc/offline-sense-voice-model-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-sense-voice-model-config.h
+// sherpa-onnx/csrc/offline-sense-voice-model-config.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-sense-voice-model-meta-data.h
+// sherpa-onnx/csrc/offline-sense-voice-model-meta-data.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-sense-voice-model.cc
+// sherpa-onnx/csrc/offline-sense-voice-model.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-sense-voice-model.h
+// sherpa-onnx/csrc/offline-sense-voice-model.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-source-separation-impl.cc
+// sherpa-onnx/csrc/offline-source-separation-impl.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-source-separation-impl.h
+// sherpa-onnx/csrc/offline-source-separation-impl.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-source-separation-model-config.cc
+// sherpa-onnx/csrc/offline-source-separation-model-config.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-source-separation-model-config.h
+// sherpa-onnx/csrc/offline-source-separation-model-config.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-source-separation-spleeter-impl.h
+// sherpa-onnx/csrc/offline-source-separation-spleeter-impl.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-source-separation-spleeter-model-config.cc
+// sherpa-onnx/csrc/offline-source-separation-spleeter-model-config.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-source-separation-spleeter-model-config.h
+// sherpa-onnx/csrc/offline-source-separation-spleeter-model-config.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-source-separation-spleeter-model-meta-data.h
+// sherpa-onnx/csrc/offline-source-separation-spleeter-model-meta-data.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-source-separation-spleeter-model.cc
+// sherpa-onnx/csrc/offline-source-separation-spleeter-model.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-source-separation-spleeter-model.h
+// sherpa-onnx/csrc/offline-source-separation-spleeter-model.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-source-separation-uvr-impl.h
+// sherpa-onnx/csrc/offline-source-separation-uvr-impl.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-source-separation-uvr-model-config.cc
+// sherpa-onnx/csrc/offline-source-separation-uvr-model-config.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-source-separation-uvr-model-config.h
+// sherpa-onnx/csrc/offline-source-separation-uvr-model-config.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-source-separation-uvr-model-meta-data.h
+// sherpa-onnx/csrc/offline-source-separation-uvr-model-meta-data.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-source-separation-uvr-model.cc
+// sherpa-onnx/csrc/offline-source-separation-uvr-model.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-source-separation-uvr-model.h
+// sherpa-onnx/csrc/offline-source-separation-uvr-model.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-source-separation.cc
+// sherpa-onnx/csrc/offline-source-separation.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-source-separation.h
+// sherpa-onnx/csrc/offline-source-separation.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speaker-diarization-impl.cc
+// sherpa-onnx/csrc/offline-speaker-diarization-impl.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speaker-diarization-impl.h
+// sherpa-onnx/csrc/offline-speaker-diarization-impl.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speaker-diarization-pyannote-impl.h
+// sherpa-onnx/csrc/offline-speaker-diarization-pyannote-impl.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speaker-diarization-result.cc
+// sherpa-onnx/csrc/offline-speaker-diarization-result.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speaker-diarization-result.h
+// sherpa-onnx/csrc/offline-speaker-diarization-result.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speaker-diarization.cc
+// sherpa-onnx/csrc/offline-speaker-diarization.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speaker-diarization.h
+// sherpa-onnx/csrc/offline-speaker-diarization.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speaker-segmentation-model-config.cc
+// sherpa-onnx/csrc/offline-speaker-segmentation-model-config.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speaker-segmentation-model-config.h
+// sherpa-onnx/csrc/offline-speaker-segmentation-model-config.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speaker-segmentation-pyannote-model-config.cc
+// sherpa-onnx/csrc/offline-speaker-segmentation-pyannote-model-config.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speaker-segmentation-pyannote-model-config.h
+// sherpa-onnx/csrc/offline-speaker-segmentation-pyannote-model-config.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speaker-segmentation-pyannote-model-meta-data.h
+// sherpa-onnx/csrc/offline-speaker-segmentation-pyannote-model-meta-data.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speaker-segmentation-pyannote-model.cc
+// sherpa-onnx/csrc/offline-speaker-segmentation-pyannote-model.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speaker-segmentation-pyannote-model.h
+// sherpa-onnx/csrc/offline-speaker-segmentation-pyannote-model.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speech-denoiser-dpdfnet-impl.h
+// sherpa-onnx/csrc/offline-speech-denoiser-dpdfnet-impl.h
+//
+// Copyright (c)  2026  Ceva Inc
+
+
+sherpa-onnx/csrc/offline-speech-denoiser-dpdfnet-model-config.cc
+// sherpa-onnx/csrc/offline-speech-denoiser-dpdfnet-model-config.cc
+//
+// Copyright (c)  2026  Ceva Inc
+
+
+sherpa-onnx/csrc/offline-speech-denoiser-dpdfnet-model-config.h
+// sherpa-onnx/csrc/offline-speech-denoiser-dpdfnet-model-config.h
+//
+// Copyright (c)  2026  Ceva Inc
+
+
+sherpa-onnx/csrc/offline-speech-denoiser-dpdfnet-model-meta-data.h
+// sherpa-onnx/csrc/offline-speech-denoiser-dpdfnet-model-meta-data.h
+//
+// Copyright (c)  2026  Ceva Inc
+
+
+sherpa-onnx/csrc/offline-speech-denoiser-dpdfnet-model.cc
+// sherpa-onnx/csrc/offline-speech-denoiser-dpdfnet-model.cc
+//
+// Copyright (c)  2026  Ceva Inc
+
+
+sherpa-onnx/csrc/offline-speech-denoiser-dpdfnet-model.h
+// sherpa-onnx/csrc/offline-speech-denoiser-dpdfnet-model.h
+//
+// Copyright (c)  2026  Ceva Inc
+
+
+sherpa-onnx/csrc/offline-speech-denoiser-gtcrn-impl.h
+// sherpa-onnx/csrc/offline-speech-denoiser-gtcrn-impl.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speech-denoiser-gtcrn-model-config.cc
+// sherpa-onnx/csrc/offline-speech-denoiser-gtcrn-model-config.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speech-denoiser-gtcrn-model-config.h
+// sherpa-onnx/csrc/offline-speech-denoiser-gtcrn-model-config.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speech-denoiser-gtcrn-model-meta-data.h
+// sherpa-onnx/csrc/offline-speech-denoiser-gtcrn-model-meta-data.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speech-denoiser-gtcrn-model.cc
+// sherpa-onnx/csrc/offline-speech-denoiser-gtcrn-model.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speech-denoiser-gtcrn-model.h
+// sherpa-onnx/csrc/offline-speech-denoiser-gtcrn-model.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speech-denoiser-impl.cc
+// sherpa-onnx/csrc/offline-speech-denoiser-impl.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speech-denoiser-impl.h
+// sherpa-onnx/csrc/offline-speaker-speech-denoiser-impl.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speech-denoiser-model-config.cc
+// sherpa-onnx/csrc/offline-speech-denoiser-model-config.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speech-denoiser-model-config.h
+// sherpa-onnx/csrc/offline-speech-denoiser-model-config.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-speech-denoiser.cc
+// sherpa-onnx/csrc/offline-speech-denoiser.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-stream.cc
+// sherpa-onnx/csrc/offline-stream.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-stream.h
+// sherpa-onnx/csrc/offline-stream.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tdnn-ctc-model.cc
+// sherpa-onnx/csrc/offline-tdnn-ctc-model.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tdnn-ctc-model.h
+// sherpa-onnx/csrc/offline-tdnn-ctc-model.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tdnn-model-config.cc
+// sherpa-onnx/csrc/offline-tdnn-model-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tdnn-model-config.h
+// sherpa-onnx/csrc/offline-tdnn-model-config.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-telespeech-ctc-model.cc
+// sherpa-onnx/csrc/offline-telespeech-ctc-model.cc
+//
+// Copyright (c)  2023-2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-telespeech-ctc-model.h
+// sherpa-onnx/csrc/offline-telespeech-ctc-model.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-transducer-decoder.h
+// sherpa-onnx/csrc/offline-transducer-decoder.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-transducer-greedy-search-decoder.cc
+// sherpa-onnx/csrc/offline-transducer-greedy-search-decoder.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-transducer-greedy-search-decoder.h
+// sherpa-onnx/csrc/offline-transducer-greedy-search-decoder.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-transducer-greedy-search-nemo-decoder.cc
+// sherpa-onnx/csrc/offline-transducer-greedy-search-nemo-decoder.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-transducer-greedy-search-nemo-decoder.h
+// sherpa-onnx/csrc/offline-transducer-greedy-search-nemo-decoder.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-transducer-model-config.cc
+// sherpa-onnx/csrc/offline-transducer-model-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-transducer-model-config.h
+// sherpa-onnx/csrc/offline-transducer-model-config.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-transducer-model.cc
+// sherpa-onnx/csrc/offline-transducer-model.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-transducer-model.h
+// sherpa-onnx/csrc/offline-transducer-model.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-transducer-modified-beam-search-decoder.cc
+// sherpa-onnx/csrc/offline-transducer-modified-beam-search-decoder.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-transducer-modified-beam-search-decoder.h
+// sherpa-onnx/csrc/offline-transducer-modified-beam-search-decoder.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-transducer-modified-beam-search-nemo-decoder.cc
+// sherpa-onnx/csrc/offline-transducer-modified-beam-search-nemo-decoder.cc
+//
+// Copyright (c)  2026  (authors: github.com/nefastosaturo, github.com/nullbio)
+
+
+sherpa-onnx/csrc/offline-transducer-modified-beam-search-nemo-decoder.h
+// sherpa-onnx/csrc/offline-transducer-modified-beam-search-nemo-decoder.h
+//
+// Copyright (c)  2026  (authors: github.com/nefastosaturo, github.com/nullbio)
+
+
+sherpa-onnx/csrc/offline-transducer-nemo-model.cc
+// sherpa-onnx/csrc/offline-transducer-nemo-model.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-transducer-nemo-model.h
+// sherpa-onnx/csrc/offline-transducer-nemo-model.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-character-frontend.cc
+// sherpa-onnx/csrc/offline-tts-character-frontend.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-character-frontend.h
+// sherpa-onnx/csrc/offline-tts-character-frontend.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-frontend.cc
+// sherpa-onnx/csrc/offline-tts-frontend.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-frontend.h
+// sherpa-onnx/csrc/offline-tts-frontend.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-impl.cc
+// sherpa-onnx/csrc/offline-tts-impl.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-impl.h
+// sherpa-onnx/csrc/offline-tts-impl.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-kitten-impl.h
+// sherpa-onnx/csrc/offline-tts-kitten-impl.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-kitten-model-config.cc
+// sherpa-onnx/csrc/offline-tts-kitten-model-config.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-kitten-model-config.h
+// sherpa-onnx/csrc/offline-tts-kitten-model-config.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-kitten-model-meta-data.h
+// sherpa-onnx/csrc/offline-tts-kitten-model-meta-data.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-kitten-model.cc
+// sherpa-onnx/csrc/offline-tts-kitten-model.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-kitten-model.h
+// sherpa-onnx/csrc/offline-tts-kitten-model.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-kokoro-impl.h
+// sherpa-onnx/csrc/offline-tts-kokoro-impl.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-kokoro-model-config.cc
+// sherpa-onnx/csrc/offline-tts-kokoro-model-config.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-kokoro-model-config.h
+// sherpa-onnx/csrc/offline-tts-kokoro-model-config.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-kokoro-model-meta-data.h
+// sherpa-onnx/csrc/offline-tts-kokoro-model-meta-data.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-kokoro-model.cc
+// sherpa-onnx/csrc/offline-tts-kokoro-model.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-kokoro-model.h
+// sherpa-onnx/csrc/offline-tts-kokoro-model.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-matcha-impl.h
+// sherpa-onnx/csrc/offline-tts-matcha-impl.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-matcha-model-config.cc
+// sherpa-onnx/csrc/offline-tts-matcha-model-config.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-matcha-model-config.h
+// sherpa-onnx/csrc/offline-tts-matcha-model-config.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-matcha-model-meta-data.h
+// sherpa-onnx/csrc/offline-tts-matcha-model-meta-data.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-matcha-model.cc
+// sherpa-onnx/csrc/offline-tts-matcha-model.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-matcha-model.h
+// sherpa-onnx/csrc/offline-tts-matcha-model.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-model-config.cc
+// sherpa-onnx/csrc/offline-tts-model-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-model-config.h
+// sherpa-onnx/csrc/offline-tts-model-config.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-pocket-impl.h
+// sherpa-onnx/csrc/offline-tts-pocket-impl.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-pocket-model-config.cc
+// sherpa-onnx/csrc/offline-tts-pocket-model-config.cc
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-pocket-model-config.h
+// sherpa-onnx/csrc/offline-tts-pocket-model-config.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-pocket-model.cc
+// sherpa-onnx/csrc/offline-tts-pocket-model.cc
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-pocket-model.h
+// sherpa-onnx/csrc/offline-tts-pocket-model.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-supertonic-impl.cc
+// sherpa-onnx/csrc/offline-tts-supertonic-impl.cc
+//
+// Copyright (c)  2026 zengyw
+//
+// This file is based on Supertonic TTS
+// (https://github.com/Supertone-Inc/supertonic) which is licensed under MIT
+// License (Copyright (c) 2025 Supertone Inc.)
+
+
+sherpa-onnx/csrc/offline-tts-supertonic-impl.h
+// sherpa-onnx/csrc/offline-tts-supertonic-impl.h
+//
+// Copyright (c)  2026 zengyw
+//
+// This file is based on Supertonic TTS
+// (https://github.com/Supertone-Inc/supertonic) which is licensed under MIT
+// License (Copyright (c) 2025 Supertone Inc.)
+
+
+sherpa-onnx/csrc/offline-tts-supertonic-model-config.cc
+// sherpa-onnx/csrc/offline-tts-supertonic-model-config.cc
+//
+// Copyright (c)  2026 zengyw
+
+
+sherpa-onnx/csrc/offline-tts-supertonic-model-config.h
+// sherpa-onnx/csrc/offline-tts-supertonic-model-config.h
+//
+// Copyright (c)  2026 zengyw
+
+
+sherpa-onnx/csrc/offline-tts-supertonic-model.cc
+// sherpa-onnx/csrc/offline-tts-supertonic-model.cc
+//
+// Copyright (c)  2026 zengyw
+//
+// This file is based on Supertonic TTS
+// (https://github.com/Supertone-Inc/supertonic) which is licensed under MIT
+// License (Copyright (c) 2025 Supertone Inc.)
+
+
+sherpa-onnx/csrc/offline-tts-supertonic-model.h
+// sherpa-onnx/csrc/offline-tts-supertonic-model.h
+//
+// Copyright (c)  2026 zengyw
+//
+// This file is based on Supertonic TTS
+// (https://github.com/Supertone-Inc/supertonic) which is licensed under MIT
+// License (Copyright (c) 2025 Supertone Inc.)
+
+
+sherpa-onnx/csrc/offline-tts-supertonic-unicode-processor-test.cc
+// sherpa-onnx/csrc/offline-tts-supertonic-unicode-processor-test.cc
+//
+// Copyright (c)  2026  Bogdan Radulescu
+
+
+sherpa-onnx/csrc/offline-tts-supertonic-unicode-processor.cc
+// sherpa-onnx/csrc/offline-tts-supertonic-unicode-processor.cc
+//
+// Copyright (c)  2026 zengyw
+//
+// This file is based on Supertonic TTS
+// (https://github.com/Supertone-Inc/supertonic) which is licensed under MIT
+// License (Copyright (c) 2025 Supertone Inc.)
+
+
+sherpa-onnx/csrc/offline-tts-supertonic-unicode-processor.h
+// sherpa-onnx/csrc/offline-tts-supertonic-unicode-processor.h
+//
+// Copyright (c)  2026 zengyw
+//
+// This file is based on Supertonic TTS
+// (https://github.com/Supertone-Inc/supertonic) which is licensed under MIT
+// License (Copyright (c) 2025 Supertone Inc.)
+
+
+sherpa-onnx/csrc/offline-tts-vits-impl.h
+// sherpa-onnx/csrc/offline-tts-vits-impl.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-vits-model-config.cc
+// sherpa-onnx/csrc/offline-tts-vits-model-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-vits-model-config.h
+// sherpa-onnx/csrc/offline-tts-vits-model-config.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-vits-model-meta-data.h
+// sherpa-onnx/csrc/offline-tts-vits-model-meta-data.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-vits-model.cc
+// sherpa-onnx/csrc/offline-tts-vits-model.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-vits-model.h
+// sherpa-onnx/csrc/offline-tts-vits-model.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-zipvoice-impl.h
+// sherpa-onnx/csrc/offline-tts-zipvoice-impl.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-zipvoice-model-config.cc
+// sherpa-onnx/csrc/offline-tts-zipvoice-model-config.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-zipvoice-model-config.h
+// sherpa-onnx/csrc/offline-tts-zipvoice-model-config.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-zipvoice-model-meta-data.h
+// sherpa-onnx/csrc/offline-tts-zipvoice-model-meta-data.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-zipvoice-model.cc
+// sherpa-onnx/csrc/offline-tts-zipvoice-model.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts-zipvoice-model.h
+// sherpa-onnx/csrc/offline-tts-zipvoice-model.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts.cc
+// sherpa-onnx/csrc/offline-tts.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-tts.h
+// sherpa-onnx/csrc/offline-tts.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-websocket-server-impl.cc
+// sherpa-onnx/csrc/offline-websocket-server-impl.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-websocket-server-impl.h
+// sherpa-onnx/csrc/offline-websocket-server-impl.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-websocket-server.cc
+// sherpa-onnx/csrc/offline-websocket-server.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-wenet-ctc-model-config.cc
+// sherpa-onnx/csrc/offline-wenet-ctc-model-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-wenet-ctc-model-config.h
+// sherpa-onnx/csrc/offline-wenet-ctc-model-config.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-wenet-ctc-model.cc
+// sherpa-onnx/csrc/offline-wenet-ctc-model.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-wenet-ctc-model.h
+// sherpa-onnx/csrc/offline-wenet-ctc-model.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-whisper-decoder.h
+// sherpa-onnx/csrc/offline-whisper-decoder.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-whisper-dtw.cc
+// sherpa-onnx/csrc/offline-whisper-dtw.cc
+//
+// Copyright (c)  2026  Posit Software, PBC
+
+
+sherpa-onnx/csrc/offline-whisper-dtw.h
+// sherpa-onnx/csrc/offline-whisper-dtw.h
+//
+// Copyright (c)  2026  Posit Software, PBC
+
+
+sherpa-onnx/csrc/offline-whisper-greedy-search-decoder.cc
+// sherpa-onnx/csrc/offline-whisper-greedy-search-decoder.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-whisper-greedy-search-decoder.h
+// sherpa-onnx/csrc/offline-whisper-greedy-search-decoder.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-whisper-model-config.cc
+// sherpa-onnx/csrc/offline-whisper-model-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-whisper-model-config.h
+// sherpa-onnx/csrc/offline-whisper-model-config.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-whisper-model.cc
+// sherpa-onnx/csrc/offline-whisper-model.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-whisper-model.h
+// sherpa-onnx/csrc/offline-whisper-model.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-whisper-timestamp-rules-test.cc
+// sherpa-onnx/csrc/offline-whisper-timestamp-rules-test.cc
+//
+// Copyright (c)  2026  Posit Software, PBC
+
+
+sherpa-onnx/csrc/offline-whisper-timestamp-rules.cc
+// sherpa-onnx/csrc/offline-whisper-timestamp-rules.cc
+//
+// Copyright (c)  2026  Posit Software, PBC
+
+
+sherpa-onnx/csrc/offline-whisper-timestamp-rules.h
+// sherpa-onnx/csrc/offline-whisper-timestamp-rules.h
+//
+// Copyright (c)  2026  Posit Software, PBC
+
+
+sherpa-onnx/csrc/offline-zipformer-audio-tagging-model-config.cc
+// sherpa-onnx/csrc/offline-zipformer-audio-tagging-model-config.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-zipformer-audio-tagging-model-config.h
+// sherpa-onnx/csrc/offline-zipformer-audio-tagging-model-config.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-zipformer-audio-tagging-model.cc
+// sherpa-onnx/csrc/offline-zipformer-audio-tagging-model.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-zipformer-audio-tagging-model.h
+// sherpa-onnx/csrc/offline-zipformer-audio-tagging-model.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-zipformer-ctc-model-config.cc
+// sherpa-onnx/csrc/offline-zipformer-ctc-model-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-zipformer-ctc-model-config.h
+// sherpa-onnx/csrc/offline-zipformer-ctc-model-config.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-zipformer-ctc-model.cc
+// sherpa-onnx/csrc/offline-zipformer-ctc-model.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/offline-zipformer-ctc-model.h
+// sherpa-onnx/csrc/offline-zipformer-ctc-model.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-cnn-bilstm-model-meta-data.h
+// sherpa-onnx/csrc/online-cnn-bilstm-model-meta-data.h
+//
+// Copyright (c) 2024 Jian You (jianyou@cisco.com, Cisco Systems)
+
+
+sherpa-onnx/csrc/online-cnn-bilstm-model.cc
+// sherpa-onnx/csrc/online-cnn-bilstm-model.cc
+//
+// Copyright (c) 2024 Jian You (jianyou@cisco.com, Cisco Systems)
+
+
+sherpa-onnx/csrc/online-cnn-bilstm-model.h
+// sherpa-onnx/csrc/online-cnn-bilstm-model.h
+//
+// Copyright (c) 2024 Jian You (jianyou@cisco.com, Cisco Systems)
+
+
+sherpa-onnx/csrc/online-conformer-transducer-model.cc
+// sherpa-onnx/csrc/online-conformer-transducer-model.cc
+//
+// Copyright (c)  2023 Jingzhao Ou (jingzhao.ou@gmail.com)
+
+
+sherpa-onnx/csrc/online-conformer-transducer-model.h
+// sherpa-onnx/csrc/online-conformer-transducer-model.h
+//
+// Copyright (c) 2023 Jingzhao Ou (jingzhao.ou@gmail.com)
+
+
+sherpa-onnx/csrc/online-ctc-decoder.h
+// sherpa-onnx/csrc/online-ctc-decoder.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-ctc-fst-decoder-config.cc
+// sherpa-onnx/csrc/online-ctc-fst-decoder-config.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-ctc-fst-decoder-config.h
+// sherpa-onnx/csrc/online-ctc-fst-decoder-config.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-ctc-fst-decoder.cc
+// sherpa-onnx/csrc/online-ctc-fst-decoder.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-ctc-fst-decoder.h
+// sherpa-onnx/csrc/online-ctc-fst-decoder.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-ctc-greedy-search-decoder.cc
+// sherpa-onnx/csrc/online-ctc-greedy-search-decoder.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-ctc-greedy-search-decoder.h
+// sherpa-onnx/csrc/online-ctc-greedy-search-decoder.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-ctc-model.cc
+// sherpa-onnx/csrc/online-ctc-model.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-ctc-model.h
+// sherpa-onnx/csrc/online-ctc-model.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-ebranchformer-transducer-model.cc
+// sherpa-onnx/csrc/online-ebranchformer-transducer-model.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+//                2025  Brno University of Technology (author: Karel Vesely)
+
+
+sherpa-onnx/csrc/online-ebranchformer-transducer-model.h
+// sherpa-onnx/csrc/online-ebranchformer-transducer-model.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+//                2025  Brno University of Technology (author: Karel Vesely)
+
+
+sherpa-onnx/csrc/online-lm-config.cc
+// sherpa-onnx/csrc/online-lm-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-lm-config.h
+// sherpa-onnx/csrc/online-lm-config.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-lm.cc
+// sherpa-onnx/csrc/online-lm.cc
+//
+// Copyright (c)  2023  Pingfeng Luo
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-lm.h
+// sherpa-onnx/csrc/online-lm.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-lstm-transducer-model.cc
+// sherpa-onnx/csrc/online-lstm-transducer-model.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-lstm-transducer-model.h
+// sherpa-onnx/csrc/online-lstm-transducer-model.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-model-config.cc
+// sherpa-onnx/csrc/online-model-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-model-config.h
+// sherpa-onnx/csrc/online-model-config.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-nemo-ctc-model-config.cc
+// sherpa-onnx/csrc/online-nemo-ctc-model-config.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-nemo-ctc-model-config.h
+// sherpa-onnx/csrc/online-nemo-ctc-model-config.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-nemo-ctc-model.cc
+// sherpa-onnx/csrc/online-nemo-ctc-model.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-nemo-ctc-model.h
+// sherpa-onnx/csrc/online-nemo-ctc-model.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-paraformer-decoder.h
+// sherpa-onnx/csrc/online-paraformer-decoder.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-paraformer-model-config.cc
+// sherpa-onnx/csrc/online-paraformer-model-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-paraformer-model-config.h
+// sherpa-onnx/csrc/online-paraformer-model-config.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-paraformer-model.cc
+// sherpa-onnx/csrc/online-paraformer-model.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-paraformer-model.h
+// sherpa-onnx/csrc/online-paraformer-model.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-punctuation-cnn-bilstm-impl.h
+// sherpa-onnx/csrc/online-punctuation-cnn-bilstm-impl.h
+//
+// Copyright (c) 2024 Jian You (jianyou@cisco.com, Cisco Systems)
+
+
+sherpa-onnx/csrc/online-punctuation-impl.cc
+// sherpa-onnx/csrc/online-punctuation-impl.cc
+//
+// Copyright (c) 2024 Jian You (jianyou@cisco.com, Cisco Systems)
+
+
+sherpa-onnx/csrc/online-punctuation-impl.h
+// sherpa-onnx/csrc/online-punctuation-impl.h
+//
+// Copyright (c) 2024 Jian You (jianyou@cisco.com, Cisco Systems)
+
+
+sherpa-onnx/csrc/online-punctuation-model-config.cc
+// sherpa-onnx/csrc/online-punctuation-model-config.cc
+//
+// Copyright (c) 2024 Jian You (jianyou@cisco.com, Cisco Systems)
+
+
+sherpa-onnx/csrc/online-punctuation-model-config.h
+// sherpa-onnx/csrc/online-punctuation-model-config.h
+//
+// Copyright (c) 2024 Jian You (jianyou@cisco.com, Cisco Systems)
+
+
+sherpa-onnx/csrc/online-punctuation.cc
+// sherpa-onnx/csrc/online-punctuation.cc
+//
+// Copyright (c) 2024 Jian You (jianyou@cisco.com, Cisco Systems)
+
+
+sherpa-onnx/csrc/online-punctuation.h
+// sherpa-onnx/csrc/online-punctuation.h
+//
+// Copyright (c) 2024 Jian You (jianyou@cisco.com, Cisco Systems)
+
+
+sherpa-onnx/csrc/online-recognizer-ctc-impl.h
+// sherpa-onnx/csrc/online-recognizer-ctc-impl.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-recognizer-impl.cc
+// sherpa-onnx/csrc/online-recognizer-impl.cc
+//
+// Copyright (c)  2023-2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-recognizer-impl.h
+// sherpa-onnx/csrc/online-recognizer-impl.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-recognizer-paraformer-impl.h
+// sherpa-onnx/csrc/online-recognizer-paraformer-impl.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-recognizer-transducer-impl.h
+// sherpa-onnx/csrc/online-recognizer-transducer-impl.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-recognizer-transducer-nemo-impl.h
+// sherpa-onnx/csrc/online-recognizer-transducer-nemo-impl.h
+//
+// Copyright (c)  2022-2024  Xiaomi Corporation
+// Copyright (c)  2024  Sangeet Sagar
+
+
+sherpa-onnx/csrc/online-recognizer-transducer-nemo-parakeet-unified-impl.h
+// sherpa-onnx/csrc/online-recognizer-transducer-nemo-parakeet-unified-impl.h
+//
+// Copyright (c)  2026  Milan Leonard
+
+
+sherpa-onnx/csrc/online-recognizer.cc
+// sherpa-onnx/csrc/online-recognizer.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+// Copyright (c)  2023  Pingfeng Luo
+
+
+sherpa-onnx/csrc/online-recognizer.h
+// sherpa-onnx/csrc/online-recognizer.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-rnn-lm.cc
+// sherpa-onnx/csrc/on-rnn-lm.cc
+//
+// Copyright (c)  2023  Pingfeng Luo
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-rnn-lm.h
+// sherpa-onnx/csrc/online-rnn-lm.h
+//
+// Copyright (c)  2023  Pingfeng Luo
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-speech-denoiser-dpdfnet-impl.h
+// sherpa-onnx/csrc/online-speech-denoiser-dpdfnet-impl.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-speech-denoiser-gtcrn-impl.h
+// sherpa-onnx/csrc/online-speech-denoiser-gtcrn-impl.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-speech-denoiser-impl.cc
+// sherpa-onnx/csrc/online-speech-denoiser-impl.cc
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-speech-denoiser-impl.h
+// sherpa-onnx/csrc/online-speech-denoiser-impl.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-speech-denoiser-stft-impl.h
+// sherpa-onnx/csrc/online-speech-denoiser-stft-impl.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-speech-denoiser.cc
+// sherpa-onnx/csrc/online-speech-denoiser.cc
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-speech-denoiser.h
+// sherpa-onnx/csrc/online-speech-denoiser.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-stream-state.h
+// sherpa-onnx/csrc/online-stream-state.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-stream.cc
+// sherpa-onnx/csrc/online-stream.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-stream.h
+// sherpa-onnx/csrc/online-stream.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-t-one-ctc-model-config.cc
+// sherpa-onnx/csrc/online-t-one-ctc-model-config.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-t-one-ctc-model-config.h
+// sherpa-onnx/csrc/online-t-one-ctc-model-config.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-t-one-ctc-model.cc
+// sherpa-onnx/csrc/online-t-one-ctc-model.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-t-one-ctc-model.h
+// sherpa-onnx/csrc/online-t-one-ctc-model.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-transducer-decoder.cc
+// sherpa-onnx/csrc/online-transducer-decoder.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-transducer-decoder.h
+// sherpa-onnx/csrc/online-transducer-decoder.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-transducer-greedy-search-decoder.cc
+// sherpa-onnx/csrc/online-transducer-greedy-search-decoder.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-transducer-greedy-search-decoder.h
+// sherpa-onnx/csrc/online-transducer-greedy-search-decoder.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-transducer-greedy-search-nemo-decoder.cc
+// sherpa-onnx/csrc/online-transducer-greedy-search-nemo-decoder.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+// Copyright (c)  2024  Sangeet Sagar
+
+
+sherpa-onnx/csrc/online-transducer-greedy-search-nemo-decoder.h
+// sherpa-onnx/csrc/online-transducer-greedy-search-nemo-decoder.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+// Copyright (c)  2024  Sangeet Sagar
+
+
+sherpa-onnx/csrc/online-transducer-greedy-search-nemo-parakeet-unified-decoder.cc
+// sherpa-onnx/csrc/online-transducer-greedy-search-nemo-parakeet-unified-decoder.cc
+//
+// Copyright (c)  2026  Milan Leonard
+
+
+sherpa-onnx/csrc/online-transducer-greedy-search-nemo-parakeet-unified-decoder.h
+// sherpa-onnx/csrc/online-transducer-greedy-search-nemo-parakeet-unified-decoder.h
+//
+// Copyright (c)  2026  Milan Leonard
+
+
+sherpa-onnx/csrc/online-transducer-model-config.cc
+// sherpa-onnx/csrc/online-transducer-model-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-transducer-model-config.h
+// sherpa-onnx/csrc/online-transducer-model-config.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-transducer-model.cc
+// sherpa-onnx/csrc/online-transducer-model.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+// Copyright (c)  2023  Pingfeng Luo
+
+
+sherpa-onnx/csrc/online-transducer-model.h
+// sherpa-onnx/csrc/online-transducer-model.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-transducer-modified-beam-search-decoder.cc
+// sherpa-onnx/csrc/online-transducer-modified-beam-search-decoder.cc
+//
+// Copyright (c)  2023  Pingfeng Luo
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-transducer-modified-beam-search-decoder.h
+// sherpa-onnx/csrc/online-transducer-modified_beam-search-decoder.h
+//
+// Copyright (c)  2023  Pingfeng Luo
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-transducer-nemo-model.cc
+// sherpa-onnx/csrc/online-transducer-nemo-model.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+// Copyright (c)  2024  Sangeet Sagar
+
+
+sherpa-onnx/csrc/online-transducer-nemo-model.h
+// sherpa-onnx/csrc/online-transducer-nemo-model.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+// Copyright (c)  2024  Sangeet Sagar
+
+
+sherpa-onnx/csrc/online-transducer-nemo-parakeet-unified-model.cc
+// sherpa-onnx/csrc/online-transducer-nemo-parakeet-unified-model.cc
+//
+// Copyright (c)  2026  Milan Leonard
+
+
+sherpa-onnx/csrc/online-transducer-nemo-parakeet-unified-model.h
+// sherpa-onnx/csrc/online-transducer-nemo-parakeet-unified-model.h
+//
+// Copyright (c)  2026  Milan Leonard
+
+
+sherpa-onnx/csrc/online-websocket-client.cc
+// sherpa/cpp_api/websocket/online-websocket-client.cc
+//
+// Copyright (c)  2022  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-websocket-server-impl.cc
+// sherpa-onnx/csrc/online-websocket-server-impl.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-websocket-server-impl.h
+// sherpa-onnx/csrc/online-websocket-server-impl.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-websocket-server.cc
+// sherpa-onnx/csrc/online-websocket-server.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-wenet-ctc-model-config.cc
+// sherpa-onnx/csrc/online-wenet-ctc-model-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-wenet-ctc-model-config.h
+// sherpa-onnx/csrc/online-wenet-ctc-model-config.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-wenet-ctc-model.cc
+// sherpa-onnx/csrc/online-wenet-ctc-model.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-wenet-ctc-model.h
+// sherpa-onnx/csrc/online-wenet-ctc-model.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-zipformer-transducer-model.cc
+// sherpa-onnx/csrc/online-zipformer-transducer-model.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-zipformer-transducer-model.h
+// sherpa-onnx/csrc/online-zipformer-transducer-model.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-zipformer2-ctc-model-config.cc
+// sherpa-onnx/csrc/online-zipformer2-ctc-model-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-zipformer2-ctc-model-config.h
+// sherpa-onnx/csrc/online-zipformer2-ctc-model-config.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-zipformer2-ctc-model.cc
+// sherpa-onnx/csrc/online-zipformer2-ctc-model.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-zipformer2-ctc-model.h
+// sherpa-onnx/csrc/online-zipformer2-ctc-model.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-zipformer2-transducer-model.cc
+// sherpa-onnx/csrc/online-zipformer2-transducer-model.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/online-zipformer2-transducer-model.h
+// sherpa-onnx/csrc/online-zipformer2-transducer-model.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/onnx-utils.cc
+// sherpa-onnx/csrc/onnx-utils.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+// Copyright (c)  2023  Pingfeng Luo
+
+
+sherpa-onnx/csrc/onnx-utils.h
+// sherpa-onnx/csrc/onnx-utils.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+// Copyright (c)  2023  Pingfeng Luo
+
+
+sherpa-onnx/csrc/packed-sequence-test.cc
+// sherpa-onnx/csrc/packed-sequence-test.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/packed-sequence.cc
+// sherpa-onnx/csrc/packed-sequence.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/packed-sequence.h
+// sherpa-onnx/csrc/packed-sequence.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/pad-sequence-test.cc
+// sherpa-onnx/csrc/pad-sequence-test.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/pad-sequence.cc
+// sherpa-onnx/csrc/pad-sequence.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/pad-sequence.h
+// sherpa-onnx/csrc/pad-sequence.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/parse-options.cc
+// sherpa-onnx/csrc/parse-options.cc
+/**
+ * Copyright 2009-2011  Karel Vesely;  Microsoft Corporation;
+ *                      Saarland University (Author: Arnab Ghoshal);
+ * Copyright 2012-2013  Johns Hopkins University (Author: Daniel Povey);
+ *                      Frantisek Skala;  Arnab Ghoshal
+ * Copyright 2013       Tanel Alumae
+ */
+
+// This file is copied and modified from kaldi/src/util/parse-options.cu
+
+
+sherpa-onnx/csrc/parse-options.h
+// sherpa-onnx/csrc/parse-options.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+//
+// This file is copied and modified from kaldi/src/util/parse-options.h
+
+
+sherpa-onnx/csrc/phrase-matcher.cc
+// sherpa-onnx/csrc/phrase-matcher.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/phrase-matcher.h
+// sherpa-onnx/csrc/phrase-matcher.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/piper-phonemize-lexicon.cc
+// sherpa-onnx/csrc/piper-phonemize-lexicon.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/piper-phonemize-lexicon.h
+// sherpa-onnx/csrc/piper-phonemize-lexicon.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/piper-phonemize-test.cc
+// sherpa-onnx/csrc/piper-phonemize-test.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/provider-config.cc
+// sherpa-onnx/csrc/provider-config.cc
+//
+// Copyright (c)  2024  Uniphore (Author: Manickavela)
+
+
+sherpa-onnx/csrc/provider-config.h
+// sherpa-onnx/csrc/provider-config.h
+//
+// Copyright (c)  2024  Uniphore (Author: Manickavela)
+
+
+sherpa-onnx/csrc/provider.cc
+// sherpa-onnx/csrc/provider.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/provider.h
+// sherpa-onnx/csrc/provider.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn-config.cc
+// sherpa-onnx/csrc/qnn-config.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn-config.h
+// sherpa-onnx/csrc/qnn-config.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/macros.h
+// sherpa-onnx/csrc/qnn/macros.h
+//
+// Copyright      2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/offline-moonshine-model-qnn.cc
+// sherpa-onnx/csrc/qnn/offline-moonshine-model-qnn.cc
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/offline-moonshine-model-qnn.h
+// sherpa-onnx/csrc/qnn/offline-moonshine-model-qnn.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/offline-paraformer-model-qnn.cc
+// sherpa-onnx/csrc/qnn/offline-paraformer-model-qnn.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/offline-paraformer-model-qnn.h
+// sherpa-onnx/csrc/qnn/offline-paraformer-model-qnn.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/offline-parakeet-ctc-model-qnn.cc
+// sherpa-onnx/csrc/qnn/offline-parakeet-ctc-model-qnn.cc
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/offline-parakeet-ctc-model-qnn.h
+// sherpa-onnx/csrc/qnn/offline-parakeet-ctc-model-qnn.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/offline-parakeet-tdt-model-qnn.cc
+// sherpa-onnx/csrc/qnn/offline-parakeet-tdt-model-qnn.cc
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/offline-parakeet-tdt-model-qnn.h
+// sherpa-onnx/csrc/qnn/offline-parakeet-tdt-model-qnn.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/offline-recognizer-moonshine-qnn-impl.h
+// sherpa-onnx/csrc/qnn/offline-recognizer-moonshine-qnn-impl.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/offline-recognizer-parakeet-ctc-qnn-impl.h
+// sherpa-onnx/csrc/qnn/offline-recognizer-parakeet-ctc-qnn-impl.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/offline-recognizer-parakeet-tdt-qnn-impl.h
+// sherpa-onnx/csrc/qnn/offline-recognizer-parakeet-tdt-qnn-impl.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/offline-recognizer-transducer-qnn-impl.h
+// sherpa-onnx/csrc/qnn/offline-recognizer-transducer-qnn-impl.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/offline-recognizer-zipformer-ctc-qnn-impl.h
+// sherpa-onnx/csrc/qnn/offline-recognizer-zipformer-ctc-qnn-impl.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/offline-sense-voice-model-qnn.cc
+// sherpa-onnx/csrc/qnn/offline-sense-voice-model-qnn.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/offline-sense-voice-model-qnn.h
+// sherpa-onnx/csrc/qnn/offline-sense-voice-model-qnn.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/offline-whisper-model-qnn.cc
+// sherpa-onnx/csrc/qnn/offline-whisper-model-qnn.cc
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/offline-whisper-model-qnn.h
+// sherpa-onnx/csrc/qnn/offline-whisper-model-qnn.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/offline-zipformer-ctc-model-qnn.cc
+// sherpa-onnx/csrc/qnn/offline-zipformer-ctc-model-qnn.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/offline-zipformer-ctc-model-qnn.h
+// sherpa-onnx/csrc/qnn/offline-zipformer-ctc-model-qnn.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/offline-zipformer-transducer-model-qnn.cc
+// sherpa-onnx/csrc/qnn/offline-zipformer-transducer-model-qnn.cc
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/offline-zipformer-transducer-model-qnn.h
+// sherpa-onnx/csrc/qnn/offline-zipformer-transducer-model-qnn.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/online-nemo-transducer-model-qnn.cc
+// sherpa-onnx/csrc/qnn/online-nemo-transducer-model-qnn.cc
+//
+// Copyright (c)  2026  Xiaomi Corporation
+//
+// QNN layout differences from ONNX:
+//
+//   Encoder input x:  QNN uses [1, window_size, feat_dim]
+//                     (ONNX uses [1, feat_dim, window_size])
+//
+//   Encoder cache:    QNN input [1, d1, d2, d0], QNN output [1, d0, d1, d2]
+//                     (ONNX uses [1, d0, d1, d2])
+//                     Storage uses QNN input format. Transpose012To120 is
+//                     applied once on output; no transpose on input.
+
+
+sherpa-onnx/csrc/qnn/online-nemo-transducer-model-qnn.h
+// sherpa-onnx/csrc/qnn/online-nemo-transducer-model-qnn.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/online-recognizer-nemo-transducer-qnn-impl.h
+// sherpa-onnx/csrc/qnn/online-recognizer-nemo-transducer-qnn-impl.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/online-recognizer-zipformer-transducer-qnn-impl.h
+// sherpa-onnx/csrc/qnn/online-recognizer-zipformer-transducer-qnn-impl.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/online-zipformer-transducer-model-qnn.cc
+// sherpa-onnx/csrc/qnn/online-zipformer-transducer-model-qnn.cc
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/online-zipformer-transducer-model-qnn.h
+// sherpa-onnx/csrc/qnn/online-zipformer-transducer-model-qnn.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/qnn-backend.cc
+// sherpa-onnx/csrc/qnn/qnn-backend.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/qnn-backend.h
+// sherpa-onnx/csrc/qnn/qnn-backend.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/qnn-model.cc
+// sherpa-onnx/csrc/qnn/qnn-model.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qnn/utils.cc
+// sherpa-onnx/csrc/qnn/utils.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/qwen-asr-tokenizer.cc
+// sherpa-onnx/csrc/qwen-asr-tokenizer.cc
+//
+// Copyright (c)  2026  zengyw
+
+
+sherpa-onnx/csrc/qwen-asr-tokenizer.h
+// sherpa-onnx/csrc/qwen-asr-tokenizer.h
+//
+// Copyright (c)  2026  zengyw
+
+
+sherpa-onnx/csrc/regex-lang-test.cc
+// sherpa-onnx/csrc/regex-lang-test.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/resample.cc
+/**
+ * Copyright     2013  Pegah Ghahremani
+ *               2014  IMSL, PKU-HKUST (author: Wei Shi)
+ *               2014  Yanqing Sun, Junjie Wang
+ *               2014  Johns Hopkins University (author: Daniel Povey)
+ * Copyright     2023  Xiaomi Corporation (authors: Fangjun Kuang)
+ *
+ * See LICENSE for clarification regarding multiple authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+// this file is copied and modified from
+// kaldi/src/feat/resample.cc
+
+
+sherpa-onnx/csrc/resample.h
+/**
+ * Copyright     2013  Pegah Ghahremani
+ *               2014  IMSL, PKU-HKUST (author: Wei Shi)
+ *               2014  Yanqing Sun, Junjie Wang
+ *               2014  Johns Hopkins University (author: Daniel Povey)
+ * Copyright     2023  Xiaomi Corporation (authors: Fangjun Kuang)
+ *
+ * See LICENSE for clarification regarding multiple authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+// this file is copied and modified from
+// kaldi/src/feat/resample.h
+
+
+sherpa-onnx/csrc/rknn/context-blocking-queue-rknn.cc
+// sherpa-onnx/csrc/rknn/context-blocking-queue-rknn.cc
+//
+// Copyright      2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/context-blocking-queue-rknn.h
+// sherpa-onnx/csrc/rknn/context-blocking-queue-rknn.h
+//
+// Copyright      2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/keyword-spotter-transducer-rknn-impl.h
+// sherpa-onnx/csrc/rknn/keyword-spotter-transducer-rknn-impl.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/macros.h
+// sherpa-onnx/csrc/rknn/macros.h
+//
+// Copyright      2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/offline-ctc-greedy-search-decoder-rknn.cc
+// sherpa-onnx/csrc/rknn/offline-ctc-greedy-search-decoder-rknn.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/offline-ctc-greedy-search-decoder-rknn.h
+// sherpa-onnx/csrc/rknn/offline-ctc-greedy-search-decoder-rknn.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/offline-paraformer-model-rknn.cc
+// sherpa-onnx/csrc/rknn/offline-paraformer-model-rknn.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/offline-paraformer-model-rknn.h
+// sherpa-onnx/csrc/rknn/offline-paraformer-model-rknn.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/offline-sense-voice-model-rknn.cc
+// sherpa-onnx/csrc/rknn/offline-sense-voice-model-rknn.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/offline-sense-voice-model-rknn.h
+// sherpa-onnx/csrc/rknn/offline-sense-voice-model-rknn.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/online-recognizer-ctc-rknn-impl.h
+// sherpa-onnx/csrc/rknn/online-recognizer-ctc-rknn-impl.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/online-recognizer-transducer-rknn-impl.h
+// sherpa-onnx/csrc/rknn/online-recognizer-transducer-rknn-impl.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/online-stream-rknn.cc
+// sherpa-onnx/csrc/rknn/online-stream-rknn.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/online-stream-rknn.h
+// sherpa-onnx/csrc/rknn/online-stream-rknn.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/online-transducer-decoder-rknn.h
+// sherpa-onnx/csrc/rknn/online-transducer-decoder-rknn.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/online-transducer-greedy-search-decoder-rknn.cc
+// sherpa-onnx/csrc/rknn/online-transducer-greedy-search-decoder-rknn.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/online-transducer-greedy-search-decoder-rknn.h
+// sherpa-onnx/csrc/rknn/online-transducer-greedy-search-decoder-rknn.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/online-transducer-modified-beam-search-decoder-rknn.cc
+// sherpa-onnx/csrc/rknn/online-transducer-modified-beam-search-decoder-rknn.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/online-transducer-modified-beam-search-decoder-rknn.h
+// sherpa-onnx/csrc/rknn/online-transducer-modified-beam-search-decoder-rknn.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/online-zipformer-ctc-model-rknn.cc
+// sherpa-onnx/csrc/rknn/online-zipformer-ctc-model-rknn.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/online-zipformer-ctc-model-rknn.h
+// sherpa-onnx/csrc/rknn/online-zipformer-ctc-model-rknn.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/online-zipformer-transducer-model-rknn.cc
+// sherpa-onnx/csrc/rknn/online-zipformer-transducer-model-rknn.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/online-zipformer-transducer-model-rknn.h
+// sherpa-onnx/csrc/rknn/online-zipformer-transducer-model-rknn.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/silero-vad-model-rknn.cc
+// sherpa-onnx/csrc/rknn/silero-vad-model-rknn.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/silero-vad-model-rknn.h
+// sherpa-onnx/csrc/rknn/silero-vad-model-rknn.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/transducer-keyword-decoder-rknn.cc
+// sherpa-onnx/csrc/rknn/transducer-keywords-decoder-rknn.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/transducer-keyword-decoder-rknn.h
+// sherpa-onnx/csrc/rknn/transducer-keywords-decoder-rknn.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/utils.cc
+// sherpa-onnx/csrc/utils.cc
+//
+// Copyright      2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/rknn/utils.h
+// sherpa-onnx/csrc/utils.h
+//
+// Copyright      2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sentence-piece-tokenizer-test.cc
+// sherpa-onnx/csrc/sentence-piece-tokenizer-test.cc
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sentence-piece-tokenizer.cc
+// sherpa-onnx/csrc/sentence-piece-tokenizer.cc
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sentence-piece-tokenizer.h
+// sherpa-onnx/csrc/sentence-piece-tokenizer.h
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/session-test.cc
+// sherpa-onnx/csrc/session-test.cc
+//
+// Copyright (c)  2026  Kevin Castillo
+
+
+sherpa-onnx/csrc/session.cc
+// sherpa-onnx/csrc/session.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/session.h
+// sherpa-onnx/csrc/session.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-display.h
+// sherpa-onnx/csrc/sherpa-display.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-alsa-offline-audio-tagging.cc
+// sherpa-onnx/csrc/sherpa-onnx-alsa-offline-audio-tagging.cc
+//
+// Copyright (c)  2022-2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-alsa-offline-speaker-identification.cc
+// sherpa-onnx/csrc/sherpa-onnx-alsa-offline-speaker-identification.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-alsa-offline.cc
+// sherpa-onnx/csrc/sherpa-onnx-alsa-offline.cc
+//
+// Copyright (c)  2022-2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-alsa.cc
+// sherpa-onnx/csrc/sherpa-onnx-alsa.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-keyword-spotter-alsa.cc
+// sherpa-onnx/csrc/sherpa-onnx-keyword-spotter-alsa.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-keyword-spotter-microphone.cc
+// sherpa-onnx/csrc/sherpa-onnx-keyword-spotter-microphone.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-keyword-spotter.cc
+// sherpa-onnx/csrc/sherpa-onnx-keyword-spotter.cc
+//
+// Copyright (c)  2023-2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-microphone-offline-audio-tagging.cc
+// sherpa-onnx/csrc/sherpa-onnx-microphone-offline-audio-tagging.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-microphone-offline-speaker-identification.cc
+// sherpa-onnx/csrc/sherpa-onnx-microphone-offline-speaker-identification.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-microphone-offline.cc
+// sherpa-onnx/csrc/sherpa-onnx-microphone-offline.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-microphone.cc
+// sherpa-onnx/csrc/sherpa-onnx-microphone.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-offline-audio-tagging.cc
+// sherpa-onnx/csrc/sherpa-onnx-offline-audio-tagging.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-offline-denoiser.cc
+// sherpa-onnx/csrc/sherpa-onnx-offline-denoiser.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-offline-diacritization.cc
+// sherpa-onnx/csrc/sherpa-onnx-offline-diacritization.cc
+//
+// Copyright (c)  2026  Matias Lin
+
+
+sherpa-onnx/csrc/sherpa-onnx-offline-language-identification.cc
+// sherpa-onnx/csrc/sherpa-onnx-offline-language-identification.cc
+//
+// Copyright (c)  2022-2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-offline-parallel.cc
+// sherpa-onnx/csrc/sherpa-onnx-offline-parallel.cc
+//
+// Copyright (c)  2022-2023  cuidc
+
+
+sherpa-onnx/csrc/sherpa-onnx-offline-punctuation.cc
+// sherpa-onnx/csrc/sherpa-onnx-offline-punctuation.cc
+//
+// Copyright (c)  2022-2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-offline-source-separation.cc
+// sherpa-onnx/csrc/sherpa-onnx-offline-source-separation.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-offline-speaker-diarization.cc
+// sherpa-onnx/csrc/sherpa-onnx-offline-speaker-diarization.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-offline-tts-play-alsa.cc
+// sherpa-onnx/csrc/sherpa-onnx-tts-play-alsa.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+// see https://www.alsa-project.org/alsa-doc/alsa-lib/group___p_c_m.html
+// https://www.alsa-project.org/alsa-doc/alsa-lib/group___p_c_m___h_w___params.html
+// https://www.alsa-project.org/alsa-doc/alsa-lib/group___p_c_m.html
+
+
+sherpa-onnx/csrc/sherpa-onnx-offline-tts-play.cc
+// sherpa-onnx/csrc/sherpa-onnx-offline-tts-play.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-offline-tts.cc
+// sherpa-onnx/csrc/sherpa-onnx-offline-tts.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-offline.cc
+// sherpa-onnx/csrc/sherpa-onnx-offline.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-online-denoiser.cc
+// sherpa-onnx/csrc/sherpa-onnx-online-denoiser.cc
+//
+// Copyright (c)  2026  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-online-punctuation.cc
+// sherpa-onnx/csrc/sherpa-onnx-online-punctuation.cc
+//
+// Copyright (c) 2024 Jian You (jianyou@cisco.com, Cisco Systems)
+
+
+sherpa-onnx/csrc/sherpa-onnx-vad-alsa-offline-asr.cc
+// sherpa-onnx/csrc/sherpa-onnx-vad-alsa-offline-asr.cc
+//
+// Copyright (c)  2022-2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-vad-alsa.cc
+// sherpa-onnx/csrc/sherpa-onnx-vad-alsa.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-vad-microphone-offline-asr.cc
+// sherpa-onnx/csrc/sherpa-onnx-vad-microphone-offline-asr.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-vad-microphone-simulated-streaming-asr.cc
+// sherpa-onnx/csrc/sherpa-onnx-vad-microphone-simulated-streaming-asr.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-vad-microphone.cc
+// sherpa-onnx/csrc/sherpa-onnx-vad-microphone.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-vad-with-offline-asr.cc
+// sherpa-onnx/csrc/sherpa-onnx-vad-with-offline-asr.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-vad-with-online-asr.cc
+// sherpa-onnx/csrc/sherpa-onnx-vad-with-online-asr.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+// Copyright (c)  2025  Pingfeng Luo
+//
+// This file demonstrates how to use vad in streaming speech recognition
+//
+
+
+sherpa-onnx/csrc/sherpa-onnx-vad.cc
+// sherpa-onnx/csrc/sherpa-onnx-vad.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx-version.cc
+// sherpa-onnx/csrc/sherpa-onnx-version.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/sherpa-onnx.cc
+// sherpa-onnx/csrc/sherpa-onnx.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/silero-vad-model-config.cc
+// sherpa-onnx/csrc/silero-vad-model-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/silero-vad-model-config.h
+// sherpa-onnx/csrc/silero-vad-model-config.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/silero-vad-model.cc
+// sherpa-onnx/csrc/silero-vad-model.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/silero-vad-model.h
+// sherpa-onnx/csrc/silero-vad-model.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/slice-test.cc
+// sherpa-onnx/csrc/slice-test.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/slice.cc
+// sherpa-onnx/csrc/slice.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/slice.h
+// sherpa-onnx/csrc/slice.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/speaker-embedding-extractor-general-impl.h
+// sherpa-onnx/csrc/speaker-embedding-extractor-general-impl.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/speaker-embedding-extractor-impl.cc
+// sherpa-onnx/csrc/speaker-embedding-extractor-impl.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/speaker-embedding-extractor-impl.h
+// sherpa-onnx/csrc/speaker-embedding-extractor-impl.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/speaker-embedding-extractor-model-meta-data.h
+// sherpa-onnx/csrc/speaker-embedding-extractor-model-meta-data.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/speaker-embedding-extractor-model.cc
+// sherpa-onnx/csrc/speaker-embedding-extractor-model.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/speaker-embedding-extractor-model.h
+// sherpa-onnx/csrc/speaker-embedding-extractor-model.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/speaker-embedding-extractor-nemo-impl.h
+// sherpa-onnx/csrc/speaker-embedding-extractor-nemo-impl.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/speaker-embedding-extractor-nemo-model-meta-data.h
+// sherpa-onnx/csrc/speaker-embedding-extractor-nemo-model-meta-data.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/speaker-embedding-extractor-nemo-model.cc
+// sherpa-onnx/csrc/speaker-embedding-extractor-nemo-model.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/speaker-embedding-extractor-nemo-model.h
+// sherpa-onnx/csrc/speaker-embedding-extractor-nemo-model.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/speaker-embedding-extractor.cc
+// sherpa-onnx/csrc/speaker-embedding-extractor.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/speaker-embedding-extractor.h
+// sherpa-onnx/csrc/speaker-embedding-extractor.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/speaker-embedding-manager-test.cc
+// sherpa-onnx/csrc/speaker-embedding-manager-test.cc
+//
+// Copyright (c) 2024 Jingzhao Ou (jingzhao.ou@gmail.com)
+
+
+sherpa-onnx/csrc/speaker-embedding-manager.cc
+// sherpa-onnx/csrc/speaker-embedding-manager.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/speaker-embedding-manager.h
+// sherpa-onnx/csrc/speaker-embedding-manager.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/spoken-language-identification-impl.cc
+// sherpa-onnx/csrc/spoken-language-identification-impl.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/spoken-language-identification-impl.h
+// sherpa-onnx/csrc/spoken-language-identification-impl.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/spoken-language-identification-whisper-impl.h
+// sherpa-onnx/csrc/spoken-language-identification-whisper-impl.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/spoken-language-identification.cc
+// sherpa-onnx/csrc/spoken-language-identification.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/spoken-language-identification.h
+// sherpa-onnx/csrc/spoken-language-identification.h
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/stack-test.cc
+// sherpa-onnx/csrc/stack-test.cc
+//
+// Copyright (c) 2023 Jingzhao Ou (jingzhao.ou@gmail.com)
+
+
+sherpa-onnx/csrc/stack.cc
+// sherpa-onnx/csrc/stack.cc
+//
+// Copyright (c) 2023 Jingzhao Ou (jingzhao.ou@gmail.com)
+
+
+sherpa-onnx/csrc/stack.h
+// sherpa-onnx/csrc/stack.h
+//
+// Copyright (c) 2023 Jingzhao Ou (jingzhao.ou@gmail.com)
+
+
+sherpa-onnx/csrc/symbol-table.cc
+// sherpa-onnx/csrc/symbol-table.cc
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/symbol-table.h
+// sherpa-onnx/csrc/symbol-table.h
+//
+// Copyright (c)  2022-2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/tashkeel-tokenizer.cc
+// sherpa-onnx/csrc/tashkeel-tokenizer.cc
+//
+// Copyright (c)  2026  Matias Lin
+
+
+sherpa-onnx/csrc/tashkeel-tokenizer.h
+// sherpa-onnx/csrc/tashkeel-tokenizer.h
+//
+// Adapted from CATT tashkeel_tokenizer.py
+//
+// Copyright (c)  2026  Matias Lin
+
+
+sherpa-onnx/csrc/ten-vad-model-config.cc
+// sherpa-onnx/csrc/ten-vad-model-config.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/ten-vad-model-config.h
+// sherpa-onnx/csrc/ten-vad-model-config.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/ten-vad-model.cc
+// sherpa-onnx/csrc/ten-vad-model.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/ten-vad-model.h
+// sherpa-onnx/csrc/ten-vad-model.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/text-utils-test.cc
+// sherpa-onnx/csrc/text-utils-test.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/text-utils.cc
+// sherpa-onnx/csrc/text-utils.cc
+//
+// Copyright 2009-2011  Saarland University;  Microsoft Corporation
+// Copyright      2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/text-utils.h
+// sherpa-onnx/csrc/text-utils.h
+//
+// Copyright 2009-2011  Saarland University;  Microsoft Corporation
+// Copyright      2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/text2token-test.cc
+// sherpa-onnx/csrc/text2token-test.cc
+//
+// Copyright (c)  2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/timer.cc
+// sherpa-onnx/csrc/timer.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/timer.h
+// sherpa-onnx/csrc/timer.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/transducer-keyword-decoder.cc
+// sherpa-onnx/csrc/transducer-keywords-decoder.cc
+//
+// Copyright (c)  2023-2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/transducer-keyword-decoder.h
+// sherpa-onnx/csrc/transducer-keywords-decoder.h
+//
+// Copyright (c)  2023-2024  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/transpose-test.cc
+// sherpa-onnx/csrc/transpose-test.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/transpose.cc
+// sherpa-onnx/csrc/transpose.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/transpose.h
+// sherpa-onnx/csrc/transpose.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/unbind-test.cc
+// sherpa-onnx/csrc/unbind-test.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/unbind.cc
+// sherpa-onnx/csrc/unbind.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/unbind.h
+// sherpa-onnx/csrc/unbind.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/utfcpp-test.cc
+// sherpa-onnx/csrc/utfcpp-test.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/utils.cc
+// sherpa-onnx/csrc/utils.cc
+//
+// Copyright      2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/utils.h
+// sherpa-onnx/csrc/utils.h
+//
+// Copyright      2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/vad-model-config.cc
+// sherpa-onnx/csrc/vad-model-config.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/vad-model-config.h
+// sherpa-onnx/csrc/vad-model-config.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/vad-model.cc
+// sherpa-onnx/csrc/vad-model.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/vad-model.h
+// sherpa-onnx/csrc/vad-model.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/version.cc
+// sherpa-onnx/csrc/version.h
+//
+// Copyright      2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/vocoder.cc
+// sherpa-onnx/csrc/vocoder.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/vocoder.h
+// sherpa-onnx/csrc/vocoder.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/vocos-vocoder.cc
+// sherpa-onnx/csrc/vocos-vocoder.cc
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/vocos-vocoder.h
+// sherpa-onnx/csrc/vocos-vocoder.h
+//
+// Copyright (c)  2025  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/voice-activity-detector.cc
+// sherpa-onnx/csrc/voice-activity-detector.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/voice-activity-detector.h
+// sherpa-onnx/csrc/voice-activity-detector.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/wave-reader-test.cc
+// sherpa-onnx/csrc/wave-reader-test.cc
+//
+// Copyright (c)  2025  Posit Software, PBC
+
+
+sherpa-onnx/csrc/wave-reader.cc
+// sherpa-onnx/csrc/wave-reader.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/wave-reader.h
+// sherpa-onnx/csrc/wave-reader.h
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/wave-writer.cc
+// sherpa-onnx/csrc/wave-writer.cc
+//
+// Copyright (c)  2023  Xiaomi Corporation
+
+
+sherpa-onnx/csrc/wave-writer.h
+// sherpa-onnx/csrc/wave-writer.h
+//
+// Copyright (c)  2023  Xiaomi Corporation

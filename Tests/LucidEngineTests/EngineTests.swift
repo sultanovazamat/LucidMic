@@ -109,7 +109,8 @@ private func noise(seconds: Double, amplitude: Float) -> [Float] {
         for start in stride(from: 0, to: input.count, by: frames) {
             for i in 0..<frames { inData[i] = input[start + i] }
             _ = lucid_engine_ioproc(
-                0, &time, inList.unsafePointer, &time, outList.unsafeMutablePointer, &time, UnsafeMutableRawPointer(engine))
+                0, &time, inList.unsafePointer, &time, outList.unsafeMutablePointer, &time,
+                UnsafeMutableRawPointer(engine))
             live += (0..<frames).map { outData[$0 * 2] }
             #expect(outData[1] == outData[0])  // both feed channels carry the voice
             Thread.sleep(forTimeInterval: 0.01)  // real time: one IO cycle per 10 ms

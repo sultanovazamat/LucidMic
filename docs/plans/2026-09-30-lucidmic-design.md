@@ -1,5 +1,8 @@
 # LucidMic — Design
 
+> Historical exploration, not the shipped 1.0.0 specification. See the root README
+> for current features, architecture, license, and installation instructions.
+
 - **Date:** 2026-09-30
 - **Status:** Approved during brainstorming
 - **Context:** Pet project for a quarterly competition between coworkers. Success = coworkers install it, use it daily, and the demo convinces them. Not a commercial product.

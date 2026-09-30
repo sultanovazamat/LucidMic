@@ -1,0 +1,47 @@
+name: Prepare release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (for example: 1.0.1)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    if: github.ref == 'refs/heads/main'
+    runs-on: macos-15
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    env:
+      RELEASE_VERSION: ${{ inputs.version }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff # v6
+        with:
+          python-version: '3.12'
+      - name: Validate version and release notes
+        run: |
+          [[ "$RELEASE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          test -f "docs/releases/$RELEASE_VERSION.md"
+      - name: Install ShellCheck
+        run: brew list shellcheck >/dev/null 2>&1 || brew install shellcheck
+      - run: scripts/check.sh
+      - name: Build and verify artifacts
+        run: scripts/build.sh "$RELEASE_VERSION"
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v$RELEASE_VERSION" \
+            "dist/LucidMic-$RELEASE_VERSION.dmg" \
+            "dist/LucidMic-$RELEASE_VERSION-runtime-source.tar.gz" \
+            dist/BlackHole-0.7.1-source.tar.gz dist/SHA256SUMS.txt \
+            --target "$GITHUB_SHA" --draft \
+            --title "LucidMic $RELEASE_VERSION" \
+            --notes-file "docs/releases/$RELEASE_VERSION.md"

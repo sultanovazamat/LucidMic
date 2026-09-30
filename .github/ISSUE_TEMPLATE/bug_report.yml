@@ -1,0 +1,17 @@
+name: Bug report
+description: Report an installation, routing, or noise-removal problem.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Include what you expected and steps to reproduce it.
+    validations:
+      required: true
+  - type: textarea
+    id: setup
+    attributes:
+      label: Your setup
+      description: LucidMic version, macOS version, Mac model, microphone, and call app.
+    validations:
+      required: true
