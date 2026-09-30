@@ -34,4 +34,4 @@ Status: simplified to a main-README table at the user's explicit request and ver
 
 ## Remaining limits
 
-The copier output has 15 full-scale samples out of 240,000; its original peaks at −0.035 dBFS. The README and measurements disclose this without changing levels or substituting another recording. Listening quality has not been assessed by a human. These are illustrative offline engine examples, not quality scores or live microphone captures. Source bandwidth is limited by the original 16 kHz recordings. The README table contains file links, not embedded audio controls.
+The copier output has 15 full-scale samples out of 240,000; its original peaks at −0.035 dBFS. The README and measurements disclose this without changing levels or substituting another recording. Listening quality has not been assessed by a human. These are illustrative offline engine examples, not quality scores or live microphone captures. Source bandwidth is limited by the original 16 kHz recordings. Subsequent inline listening previews are documented in [the October 1 plan](2026-10-01-inline-audio-previews.md).

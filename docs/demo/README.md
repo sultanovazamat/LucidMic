@@ -7,6 +7,32 @@ added noise, normalization, or second noise-removal stage is used.
 All six before/after pairs are linked in the
 [main README's comparison table](../../README.md#hear-the-difference).
 
+## Inline listening previews
+
+The README embeds GitHub-hosted MP4 attachments, each with a static Original
+or LucidMic label. GitHub starts these players muted; use the speaker icon to
+unmute. Each preview contains the complete corresponding WAV, encoded as mono
+48 kHz AAC at a target 256 kb/s with H.264 video. No gain adjustment or additional
+denoising is applied. AAC is lossy; use the WAV links for exact comparisons.
+The original recordings still have the 16 kHz bandwidth limitation described below.
+
+[Preview metadata](previews.json) records source and MP4 hashes, file sizes,
+encoding settings, and stable GitHub attachment URLs. The same CC BY 4.0 audio
+attribution applies to the previews. Attachment visibility follows repository access.
+
+To regenerate the previews with FFmpeg installed:
+
+```sh
+python3 scripts/prepare-demo-previews.py
+```
+
+This verifies the source WAVs first, then writes twelve MP4s and a manifest to
+`build/demo-previews/`. The label font defaults to macOS Arial; use `--font`
+to select another TrueType font. Upload regenerated MP4s using GitHub's attachment
+flow and update the stable attachment URLs in the README and preview metadata.
+MP4 files committed directly to the repository do not provide the same inline
+embedding behavior. Encoder/font versions can change the generated MP4 hashes.
+
 ## Source and attribution
 
 **Microsoft and DNS Challenge contributors**, *Initial Testset for DNS Challenge*,
