@@ -31,14 +31,17 @@ Real people speaking while typing, in a café, and around office noise.
 These complete Microsoft DNS Challenge recordings are processed with the
 1.0.2 candidate's actual engine. No TTS, added noise, or level normalization.
 
+Press Play, then unmute using the speaker icon. MP4 previews use compressed
+AAC audio; the WAV links provide lossless files.
+
 | Recording | Duration | Before | After |
 | --- | ---: | --- | --- |
-| Keyboard typing | 6.32 s | [Original WAV](docs/demo/audio/typing-original.wav) | [LucidMic WAV](docs/demo/audio/typing-lucidmic.wav) |
-| Café conversation | 5.66 s | [Original WAV](docs/demo/audio/cafeteria-original.wav) | [LucidMic WAV](docs/demo/audio/cafeteria-lucidmic.wav) |
-| Copier | 5.00 s | [Original WAV](docs/demo/audio/copier-original.wav) | [LucidMic WAV](docs/demo/audio/copier-lucidmic.wav) |
-| Open office | 5.64 s | [Original WAV](docs/demo/audio/office-original.wav) | [LucidMic WAV](docs/demo/audio/office-lucidmic.wav) |
-| Clatter | 14.28 s | [Original WAV](docs/demo/audio/clatter-original.wav) | [LucidMic WAV](docs/demo/audio/clatter-lucidmic.wav) |
-| Quiet-room control | 5.16 s | [Original WAV](docs/demo/audio/quiet-original.wav) | [LucidMic WAV](docs/demo/audio/quiet-lucidmic.wav) |
+| Keyboard typing | 6.32 s | <video src="https://github.com/user-attachments/assets/b52c68f3-a056-4ab8-b7b3-fe211a2938bb" controls></video><br>[Original WAV](docs/demo/audio/typing-original.wav) | <video src="https://github.com/user-attachments/assets/7e278cbb-e95b-439e-85b5-e570487697c8" controls></video><br>[LucidMic WAV](docs/demo/audio/typing-lucidmic.wav) |
+| Café conversation | 5.66 s | <video src="https://github.com/user-attachments/assets/eda32031-7e03-41b1-bc4f-7101d0ff29da" controls></video><br>[Original WAV](docs/demo/audio/cafeteria-original.wav) | <video src="https://github.com/user-attachments/assets/787b3730-9d39-4810-b831-d1ca99109047" controls></video><br>[LucidMic WAV](docs/demo/audio/cafeteria-lucidmic.wav) |
+| Copier | 5.00 s | <video src="https://github.com/user-attachments/assets/f4036c46-e371-4b2a-8180-82bc7128c5c9" controls></video><br>[Original WAV](docs/demo/audio/copier-original.wav) | <video src="https://github.com/user-attachments/assets/9aed777b-d261-41f9-8547-109e18821b4e" controls></video><br>[LucidMic WAV](docs/demo/audio/copier-lucidmic.wav) |
+| Open office | 5.64 s | <video src="https://github.com/user-attachments/assets/b9eb2fbf-38e5-48e3-b095-c3dec8fdb441" controls></video><br>[Original WAV](docs/demo/audio/office-original.wav) | <video src="https://github.com/user-attachments/assets/572125b4-e169-4cee-a847-cba16b8133ca" controls></video><br>[LucidMic WAV](docs/demo/audio/office-lucidmic.wav) |
+| Clatter | 14.28 s | <video src="https://github.com/user-attachments/assets/e38c2d60-d971-425e-b8f2-2b54b2ca4fbd" controls></video><br>[Original WAV](docs/demo/audio/clatter-original.wav) | <video src="https://github.com/user-attachments/assets/becd82bb-aa0c-4101-b472-f5849822f72b" controls></video><br>[LucidMic WAV](docs/demo/audio/clatter-lucidmic.wav) |
+| Quiet-room control | 5.16 s | <video src="https://github.com/user-attachments/assets/8c6c4a7d-2ce7-40f5-84bf-9e249eca37aa" controls></video><br>[Original WAV](docs/demo/audio/quiet-original.wav) | <video src="https://github.com/user-attachments/assets/75e8bd83-be30-4e13-a6be-12a4618af3ae" controls></video><br>[LucidMic WAV](docs/demo/audio/quiet-lucidmic.wav) |
 
 The sources are 16 kHz recordings; processed files are saved at 48 kHz with
 the engine delay removed. These illustrate offline processing. The copier
