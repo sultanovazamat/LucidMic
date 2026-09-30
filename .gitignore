@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+# Xcode / SwiftPM
+build/
+DerivedData/
+.build/
+.swiftpm/
+*.xcuserstate
+xcuserdata/
+# Python
+.venv/
+__pycache__/
+*.pyc
+# Artifacts
+dist/
+*.pkg
+bench/data/
+bench/results/
+# Secrets
+.env
