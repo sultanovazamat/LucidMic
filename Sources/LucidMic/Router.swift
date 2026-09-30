@@ -11,24 +11,23 @@ enum RouterError: LocalizedError {
     }
 }
 
-/// Streams a physical mic through RNNoise into the virtual mic, via a private aggregate device.
+/// Streams a physical mic through RNNoise into LucidMic Feed (heard on LucidMic Microphone), via a private aggregate.
 @MainActor
 final class Router {
     private var aggregate = AudioObjectID(kAudioObjectUnknown)
     private var proc: AudioDeviceIOProcID?
     private var engine: OpaquePointer?
 
-    func start(mic: AudioDevice, virtualMic: AudioDevice) throws {
+    func start(mic: AudioDevice, feed: AudioDevice) throws {
         stop()
-        let aggregate = try Self.createAggregate(micUID: mic.uid, virtualMicUID: virtualMic.uid)
+        let aggregate = try Self.createAggregate(micUID: mic.uid, feedUID: feed.uid)
         self.aggregate = aggregate
         AudioSystem.set(aggregate, kAudioDevicePropertyNominalSampleRate, Float64(48_000))  // RNNoise needs 48 kHz
         AudioSystem.set(aggregate, kAudioDevicePropertyBufferFrameSize, UInt32(480))
 
-        // Aggregate buffer lists concatenate subdevice streams in order: mic first, then the virtual mic.
+        // Aggregate buffer lists concatenate subdevice streams in order: mic first, then the feed.
         let routing = LucidRouting(
-            inputBuffer: 0, outputFirstBuffer: UInt32(mic.outputStreams),
-            outputBufferCount: UInt32(virtualMic.outputStreams))
+            inputBuffer: 0, outputFirstBuffer: UInt32(mic.outputStreams), outputBufferCount: UInt32(feed.outputStreams))
         engine = lucid_engine_create(routing)
 
         var newProc: AudioDeviceIOProcID?
@@ -60,7 +59,7 @@ final class Router {
     }
 
     /// Nonisolated on purpose: building a `[String: Any]` inside a @MainActor method crashes Swift 6.3's region analysis.
-    nonisolated private static func createAggregate(micUID: String, virtualMicUID: String) throws -> AudioObjectID {
+    nonisolated private static func createAggregate(micUID: String, feedUID: String) throws -> AudioObjectID {
         let description: [String: Any] = [
             kAudioAggregateDeviceNameKey: "LucidMic Engine",
             kAudioAggregateDeviceUIDKey: "com.sultanovazamat.lucidmic.engine",
@@ -68,7 +67,7 @@ final class Router {
             kAudioAggregateDeviceMainSubDeviceKey: micUID,
             kAudioAggregateDeviceSubDeviceListKey: [
                 [kAudioSubDeviceUIDKey: micUID],
-                [kAudioSubDeviceUIDKey: virtualMicUID, kAudioSubDeviceDriftCompensationKey: 1],
+                [kAudioSubDeviceUIDKey: feedUID, kAudioSubDeviceDriftCompensationKey: 1],
             ],
         ]
         var id = AudioObjectID(kAudioObjectUnknown)

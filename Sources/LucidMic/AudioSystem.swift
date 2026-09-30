@@ -9,11 +9,17 @@ struct AudioDevice: Equatable {
     let outputStreams: Int
     let transport: UInt32
 
-    var isBlackHole: Bool { name.localizedCaseInsensitiveContains("BlackHole") }
+    /// LucidMic's own devices ("LucidMic Microphone", hidden "LucidMic Feed").
+    var isLucid: Bool { uid.hasPrefix("LucidMic_") }
     var isAggregate: Bool { transport == kAudioDeviceTransportTypeAggregate }
     var isBuiltIn: Bool { transport == kAudioDeviceTransportTypeBuiltIn }
-    /// A real microphone we may read from (never the virtual mic, never an aggregate).
-    var isPhysicalInput: Bool { inputStreams > 0 && !isBlackHole && !isAggregate }
+    /// A real microphone we may read from (never our own devices, never an aggregate).
+    var isPhysicalInput: Bool { inputStreams > 0 && !isLucid && !isAggregate }
+}
+
+enum LucidDevice {
+    static let microphoneUID = "LucidMic_UID"  // visible input that call apps use
+    static let feedUID = "LucidMic_2_UID"  // hidden output we write clean audio to
 }
 
 /// Thin Core Audio property helpers.
@@ -38,7 +44,18 @@ enum AudioSystem {
             transport: scalar(id, kAudioDevicePropertyTransportType) ?? 0)
     }
 
-    static func device(uid: String) -> AudioDevice? { devices().first { $0.uid == uid } }
+    /// Looks a device up by UID, including hidden devices that `devices()` does not list.
+    static func device(uid: String) -> AudioDevice? {
+        var addr = address(kAudioHardwarePropertyTranslateUIDToDevice)
+        var qualifier = uid as CFString
+        var id = AudioObjectID(kAudioObjectUnknown)
+        var size = UInt32(MemoryLayout<AudioObjectID>.size)
+        let status = withUnsafeMutablePointer(to: &qualifier) {
+            AudioObjectGetPropertyData(system, &addr, UInt32(MemoryLayout<CFString>.size), $0, &size, &id)
+        }
+        guard status == noErr, id != kAudioObjectUnknown else { return nil }
+        return device(id: id)
+    }
 
     static var defaultInput: AudioDevice? {
         scalar(system, kAudioHardwarePropertyDefaultInputDevice).flatMap { device(id: $0) }
