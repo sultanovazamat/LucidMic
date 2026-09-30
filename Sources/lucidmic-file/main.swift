@@ -7,6 +7,7 @@ import LucidEngine
 let mono48k = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: 48_000, channels: 1, interleaved: false)!
 
 /// Reads any audio file and converts it to 48 kHz mono, the engine's format.
+@MainActor
 func readMono48k(_ path: String) throws -> AVAudioPCMBuffer {
     let file = try AVAudioFile(forReading: URL(fileURLWithPath: path))
     let source = AVAudioPCMBuffer(pcmFormat: file.processingFormat, frameCapacity: AVAudioFrameCount(file.length))!
@@ -43,6 +44,7 @@ func writeWAV(_ buffer: AVAudioPCMBuffer, to path: String) throws {
     try file.write(from: buffer)
 }
 
+@MainActor
 func run() throws -> Int32 {
     let args = CommandLine.arguments
     guard args.count == 3 || args.count == 4 else {

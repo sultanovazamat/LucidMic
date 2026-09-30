@@ -8,7 +8,7 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
 
 ROOT = Path(__file__).resolve().parent.parent
 RES = ROOT / "Resources"
@@ -133,11 +133,34 @@ def make_background(scale: int) -> Image.Image:
     return image.convert("RGB")
 
 
+def make_ui_previews() -> None:
+    """Frame the actual native UI snapshots for light/dark README appearances."""
+    for mode, top, bottom in (
+        ("light", (228, 237, 252), (244, 240, 234)),
+        ("dark", (14, 23, 40), (25, 29, 37)),
+    ):
+        with Image.open(ASSETS / f"menu-{mode}.png") as snapshot:
+            card = snapshot.convert("RGBA")
+        canvas = gradient((1200, 560), top, bottom)
+        x, y = (canvas.width - card.width) // 2, (canvas.height - card.height) // 2
+        shadow = Image.new("RGBA", canvas.size)
+        ImageDraw.Draw(shadow).rounded_rectangle(
+            (x, y + 12, x + card.width, y + card.height + 12), radius=24, fill=(0, 0, 0, 65)
+        )
+        canvas.alpha_composite(shadow.filter(ImageFilter.GaussianBlur(25)))
+        mask = Image.new("L", card.size)
+        ImageDraw.Draw(mask).rounded_rectangle((0, 0, card.width - 1, card.height - 1), radius=24, fill=255)
+        card.putalpha(ImageChops.multiply(card.getchannel("A"), mask))
+        canvas.alpha_composite(card, (x, y))
+        canvas.convert("RGB").save(ASSETS / f"hero-{mode}.png", optimize=True)
+
+
 if __name__ == "__main__":
     RES.mkdir(exist_ok=True)
     (ROOT / "build").mkdir(exist_ok=True)
     make_icon()
     make_banner()
+    make_ui_previews()
     with tempfile.TemporaryDirectory() as temporary:
         one, two = Path(temporary) / "background.png", Path(temporary) / "background@2x.png"
         make_background(1).save(one)
