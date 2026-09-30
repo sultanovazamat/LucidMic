@@ -142,22 +142,15 @@ explains the code layout and checks. See [CHANGELOG.md](CHANGELOG.md) for releas
 
 ## Credits
 
-- [DPDFNet2](https://github.com/ceva-ip/DPDFNet) by Ceva: the speech-enhancement
-  model. Apache-2.0.
-- [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx): the model API. Its own code
-  is Apache-2.0; the distributed runtime includes separately licensed components,
-  including GPL-3.0 eSpeak NG.
-- [ONNX Runtime](https://github.com/microsoft/onnxruntime) by Microsoft: inference.
-  MIT.
-- [BlackHole](https://github.com/ExistentialAudio/BlackHole) by Existential Audio:
-  the virtual microphone driver. GPL-3.0.
-- [dmgbuild](https://github.com/dmgbuild/dmgbuild), for the install window.
+- [DPDFNet2](https://github.com/ceva-ip/DPDFNet) by Ceva — noise-removal model.
+- [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) — speech-enhancement API.
+- [ONNX Runtime](https://github.com/microsoft/onnxruntime) by Microsoft — model inference.
+- [BlackHole](https://github.com/ExistentialAudio/BlackHole) by Existential Audio — virtual microphone.
 
-Their licences and notices are in
-[Resources/THIRD_PARTY_NOTICES.txt](Resources/THIRD_PARTY_NOTICES.txt) and
-[Resources/Licenses](Resources/Licenses), which also ship inside the app.
-The release includes matching driver and runtime source archives; exact runtime
-revisions are in [scripts/runtime-sources.json](scripts/runtime-sources.json).
+Full dependency [licences and notices](Resources/THIRD_PARTY_NOTICES.txt) ship
+with the app, including those for components embedded in the runtime. Matching
+driver and runtime source archives accompany each release; see
+[runtime build details](docs/runtime-build.md) and [packaging tools](CONTRIBUTING.md#releases).
 
 ## Licence
 

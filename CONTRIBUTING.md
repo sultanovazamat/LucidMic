@@ -25,6 +25,10 @@ for Python. Shell scripts are checked by ShellCheck.
 
 ## Releases
 
+The drag-to-Applications installer is created with
+[dmgbuild](https://github.com/dmgbuild/dmgbuild), pinned in `requirements-dev.txt`.
+It is a build tool and is not bundled in the installed app.
+
 Update the changelog and version defaults, then run the full checks and
 `scripts/build.sh <version>`. Verify the app from the mounted DMG on macOS, not
 only the development executable. The **Prepare release** GitHub Actions workflow
