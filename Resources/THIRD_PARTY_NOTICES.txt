@@ -1,0 +1,13 @@
+LucidMic includes the following third-party software:
+
+- DPDFNet speech enhancement model (dpdfnet2_48khz_hr) — Ceva Inc., Apache License 2.0
+  https://github.com/ceva-ip/DPDFNet
+- sherpa-onnx — Xiaomi Corporation and k2-fsa contributors, Apache License 2.0
+  https://github.com/k2-fsa/sherpa-onnx
+- ONNX Runtime — Microsoft Corporation, MIT License
+  https://github.com/microsoft/onnxruntime
+- BlackHole virtual audio driver (renamed "LucidMic Microphone") — Existential Audio Inc., GPL-3.0
+  https://github.com/ExistentialAudio/BlackHole (full license: BlackHole-LICENSE.txt)
+
+Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0
+MIT License: https://opensource.org/licenses/MIT

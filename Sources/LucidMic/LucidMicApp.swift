@@ -91,7 +91,11 @@ final class AppState {
             return
         }
         do {
-            try router.start(mic: mic, feed: feed)
+            guard let model = Bundle.main.path(forResource: "dpdfnet2_48khz_hr", ofType: "onnx") else {
+                status = "The noise-removal model is missing from the app."
+                return
+            }
+            try router.start(mic: mic, feed: feed, modelPath: model)
             AudioSystem.setDefaultInput(lucidMic)  // every app on the default mic now hears LucidMic
             micName = mic.name
             isRouting = true
