@@ -6,8 +6,7 @@
     "sha256": "b0374cc56dbc186d442ae73d5de743bb092470b640c4c50ce7b029044c0c4fa8",
     "license_files": [
       "Resources/Licenses/runtime-sherpa-onnx-Copyright-Notices.txt",
-      "Resources/Licenses/runtime-sherpa-onnx-LICENSE.txt",
-      "Resources/Licenses/runtime-sherpa-onnx-Supertonic-MIT.txt"
+      "Resources/Licenses/runtime-sherpa-onnx-LICENSE.txt"
     ],
     "build_recipe": ".github/workflows/macos.yaml",
     "external_runtime_source": {
@@ -78,32 +77,6 @@
       "Resources/Licenses/runtime-simple-sentencepiece-LICENSE.txt",
       "Resources/Licenses/runtime-simple-sentencepiece-darts.h.txt",
       "Resources/Licenses/runtime-simple-sentencepiece-threadpool.h.txt"
-    ]
-  },
-  {
-    "name": "piper-phonemize",
-    "revision": "f3ff95afc03640bc1399e113e83361192a2fafb4",
-    "url": "https://github.com/csukuangfj/piper-phonemize/archive/f3ff95afc03640bc1399e113e83361192a2fafb4.tar.gz",
-    "sha256": "257a121c1edc30b13363079abe7bbed16b194ebb8df6a861ee39e733f42bf708",
-    "license_files": [
-      "Resources/Licenses/runtime-piper-phonemize-LICENSE.md.txt",
-      "Resources/Licenses/runtime-piper-phonemize-licenses-uni-algo-LICENSE.md.txt"
-    ]
-  },
-  {
-    "name": "espeak-ng",
-    "revision": "ed530aa113046142eb5115cf2fc9157854d0ffe1",
-    "url": "https://github.com/csukuangfj/espeak-ng/archive/ed530aa113046142eb5115cf2fc9157854d0ffe1.tar.gz",
-    "sha256": "3606d2bf55b3d7e6f1a0685e5d1a83c24f96197ada93b849a4dbfe7b34baf0d9",
-    "license_files": [
-      "Resources/Licenses/runtime-espeak-ng-COPYING.APACHE.txt",
-      "Resources/Licenses/runtime-espeak-ng-COPYING.BSD2.txt",
-      "Resources/Licenses/runtime-espeak-ng-COPYING.UCD.txt",
-      "Resources/Licenses/runtime-espeak-ng-COPYING.txt",
-      "Resources/Licenses/runtime-espeak-ng-Copyright-Notices.txt",
-      "Resources/Licenses/runtime-espeak-ng-src-ucd-tools-AUTHORS.txt",
-      "Resources/Licenses/runtime-espeak-ng-src-ucd-tools-COPYING.UCD.txt",
-      "Resources/Licenses/runtime-espeak-ng-src-ucd-tools-COPYING.txt"
     ]
   },
   {

@@ -24,6 +24,37 @@ struct SettingsView: View {
 
     var body: some View {
         Form {
+            Section("Input") {
+                Picker(
+                    "Microphone",
+                    selection: Binding(
+                        get: { state.selectedInputUID }, set: { uid in Task { await state.selectInput(uid) } })
+                ) {
+                    Text("Automatic").tag("")
+                    ForEach(state.availableInputs, id: \.uid) { microphone in
+                        Text(microphone.name).tag(microphone.uid)
+                    }
+                    if !state.selectedInputUID.isEmpty
+                        && !state.availableInputs.contains(where: { $0.uid == state.selectedInputUID })
+                    {
+                        Text("Disconnected microphone").tag(state.selectedInputUID)
+                    }
+                }
+                .disabled(state.isBusy)
+                if let microphone = state.selectedMicrophone, microphone.inputChannelCount > 1 {
+                    Picker(
+                        "Channel",
+                        selection: Binding(
+                            get: { state.selectedInputChannel },
+                            set: { channel in Task { await state.selectInputChannel(channel) } })
+                    ) {
+                        ForEach(0..<microphone.inputChannelCount, id: \.self) { channel in
+                            Text("Channel \(channel + 1)").tag(channel)
+                        }
+                    }
+                    .disabled(state.isBusy)
+                }
+            }
             Section("General") {
                 Toggle(
                     "Launch at Login",

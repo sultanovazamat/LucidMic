@@ -14,8 +14,11 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def digest(path: Path) -> str:
+    checksum = hashlib.sha256()
     with path.open("rb") as stream:
-        return hashlib.file_digest(stream, "sha256").hexdigest()
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            checksum.update(block)
+    return checksum.hexdigest()
 
 
 def reproducible(info: tarfile.TarInfo) -> tarfile.TarInfo:
@@ -68,7 +71,7 @@ def package(version: str) -> None:
         "The archives in archives/ are unmodified upstream sources pinned by sources.json.\n"
         "Every archive is SHA-256 verified. Extract the individual archives to inspect\n"
         "their source, license files, CMake build files and upstream build workflows.\n\n"
-        "LucidMic ships the official sherpa-onnx v1.13.8 macOS arm64 shared runtime.\n"
+        "LucidMic ships the official sherpa-onnx v1.13.8 macOS arm64 shared no-TTS runtime.\n"
         "Its source archive contains the CMake dependency recipes and release workflows.\n"
         "BUILD.md documents the upstream build, ONNX library-version patch, and build commands.\n"
         "The large, separately MIT-licensed ONNX Runtime source is hosted upstream:\n"

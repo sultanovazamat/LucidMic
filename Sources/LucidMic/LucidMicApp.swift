@@ -18,11 +18,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var controller: MenuController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        state.recoverDefaultInput()
         controller = MenuController(state: state)
+        Task { await state.recoverDefaultInput() }
     }
 
-    func applicationWillTerminate(_ notification: Notification) { state.turnOff() }
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        Task {
+            let restored = await state.turnOff()
+            if !restored {
+                let alert = NSAlert()
+                alert.messageText = "Couldn't restore your microphone"
+                alert.informativeText = state.notice?.detail ?? "Select a physical input in System Settings."
+                alert.addButton(withTitle: "Stay Open")
+                alert.addButton(withTitle: "Quit Anyway")
+                sender.activate(ignoringOtherApps: true)
+                sender.reply(toApplicationShouldTerminate: alert.runModal() == .alertSecondButtonReturn)
+            } else {
+                sender.reply(toApplicationShouldTerminate: true)
+            }
+        }
+        return .terminateLater
+    }
 
     func applicationDidBecomeActive(_ notification: Notification) { state.refresh() }
 

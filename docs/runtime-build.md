@@ -1,6 +1,6 @@
 # Runtime source and build provenance
 
-LucidMic 1.0.1 uses the official sherpa-onnx **v1.13.8 macOS arm64 shared**
+LucidMic uses the official sherpa-onnx **v1.13.8 macOS arm64 shared no-TTS**
 distribution, including ONNX Runtime **v1.28.2**. Its source bundle contains
 unmodified source archives pinned by `scripts/runtime-sources.json`, with SHA-256
 checksums. The full license notices are bundled in the app.
@@ -9,10 +9,18 @@ checksums. The full license notices are bundled in the app.
 
 The sherpa source archive includes `.github/workflows/macos.yaml`, the top-level
 `CMakeLists.txt`, and the dependency recipes in `cmake/`. The upstream release
-build uses Release mode, shared libraries, TTS enabled, and universal
+build uses Release mode, shared libraries, `SHERPA_ONNX_ENABLE_TTS=OFF`, and universal
 `arm64;x86_64` architectures. It configures, builds and installs with CMake, then
 uses `lipo` to extract arm64 libraries and applies ad-hoc signatures. LucidMic
-ships the arm64 artifact. Its engine calls only the noise-removal API.
+ships the arm64 no-TTS artifact. Its engine calls only the noise-removal API.
+The archive and both shipped libraries are pinned and SHA-256 checked by
+`scripts/fetch-deps.sh`, including cached libraries. The ONNX Runtime library and
+DPDFNet2 model are unchanged from the full upstream distribution.
+
+This supported upstream variant removes speech-synthesis code and the eSpeak NG
+and piper-phonemize dependencies. Recognition and speaker-diarization components
+remain: upstream does not offer a native denoising-only build switch. LucidMic
+does not maintain a source fork to remove them.
 
 Extract the archives inside `RuntimeSource/archives/` to inspect each dependency.
 Their exact revisions and checksums are in `RuntimeSource/sources.json`; use those

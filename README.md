@@ -21,6 +21,31 @@
   <a href="https://github.com/sultanovazamat/LucidMic/releases/download/v1.0.1/LucidMic-1.0.1.dmg"><b>Download LucidMic for Mac</b></a>
 </p>
 
+**Development checkout: 1.0.2 (unreleased).** The download above is 1.0.1.
+The usage and build instructions below describe this checkout; see the
+[1.0.2 changes](docs/releases/1.0.2.md).
+
+## Hear the difference
+
+Real people speaking while typing, in a café, and around office noise.
+These complete Microsoft DNS Challenge recordings are processed with the
+1.0.2 candidate's actual engine. No TTS, added noise, or level normalization.
+
+| Recording | Duration | Before | After |
+| --- | ---: | --- | --- |
+| Keyboard typing | 6.32 s | [Original WAV](docs/demo/audio/typing-original.wav) | [LucidMic WAV](docs/demo/audio/typing-lucidmic.wav) |
+| Café conversation | 5.66 s | [Original WAV](docs/demo/audio/cafeteria-original.wav) | [LucidMic WAV](docs/demo/audio/cafeteria-lucidmic.wav) |
+| Copier | 5.00 s | [Original WAV](docs/demo/audio/copier-original.wav) | [LucidMic WAV](docs/demo/audio/copier-lucidmic.wav) |
+| Open office | 5.64 s | [Original WAV](docs/demo/audio/office-original.wav) | [LucidMic WAV](docs/demo/audio/office-lucidmic.wav) |
+| Clatter | 14.28 s | [Original WAV](docs/demo/audio/clatter-original.wav) | [LucidMic WAV](docs/demo/audio/clatter-lucidmic.wav) |
+| Quiet-room control | 5.16 s | [Original WAV](docs/demo/audio/quiet-original.wav) | [LucidMic WAV](docs/demo/audio/quiet-lucidmic.wav) |
+
+The sources are 16 kHz recordings; processed files are saved at 48 kHz with
+the engine delay removed. These illustrate offline processing. The copier
+example retains a small amount of output clipping.
+Audio: Microsoft and DNS Challenge contributors, [CC BY 4.0](docs/demo/LICENSE-audio.txt).
+[Source credits, measurements, and reproduction steps](docs/demo/README.md).
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/hero-dark.png">
   <img alt="LucidMic menu preview: checked Noise Removal, current microphone, Settings, Help, About, and Quit" src="docs/assets/hero-light.png">
@@ -42,6 +67,8 @@ sound reaches your call app, so you control it from one place.
 - **Lets you hear the difference.** Click **Noise Removal** during a call or recording.
   Turning noise removal off passes your original audio through without
   disconnecting the virtual microphone.
+- **Uses the input you choose.** Select a physical microphone in Settings, and
+  choose its channel when using an audio interface with multiple inputs.
 - **Stays in the menu bar.** One menu command, a status line, and optional launch at
   login. Quitting restores your physical microphone as the default.
 - **Installs its own microphone.** Approve the driver installation once. Remove
@@ -81,8 +108,9 @@ Click the waveform in the menu bar:
   This does not mute the microphone.
 - The status reads **Not running**, **Removing noise**, or **Passing original
   audio**. While routing, the next line shows your actual input microphone.
-- **Settings…** (`⌘,`) — manage **Launch at Login** and **Remove Virtual
-  Microphone…**. Removal asks for confirmation before stopping audio routing.
+- **Settings…** (`⌘,`) — choose your **Microphone** and, when available, its
+  **Channel**; manage **Launch at Login** and **Remove Virtual Microphone…**.
+  Removal asks for confirmation before stopping audio routing.
 - **How to Use LucidMic** — opens a short guide that works offline.
 - **About LucidMic** — shows the app's version and information.
 - **Quit LucidMic** (`⌘Q`) — stops routing and restores your physical microphone
@@ -91,6 +119,19 @@ Click the waveform in the menu bar:
 Launch at Login opens the app; noise removal starts when you enable it. Removing
 the virtual microphone leaves LucidMic installed and restarts the audio service.
 Enabling Noise Removal later sets the microphone up again.
+
+In Settings, **Automatic** chooses an available physical microphone. Selecting a
+microphone or channel while routing briefly restarts the audio connection and
+keeps your Noise Removal setting, including original-audio mode.
+
+If a microphone disconnects or its audio configuration changes incompatibly,
+LucidMic stops routing and shows an error. Reconnect it or choose another input,
+then turn on **Noise Removal** to retry. If macOS cannot restore a physical input,
+select your microphone in **System Settings → Sound → Input**.
+
+Inputs must support **48 kHz** audio with buffers of **512 frames or fewer**.
+LucidMic checks the configuration before starting and reports an error when an
+input cannot use these settings; choose another microphone or audio mode.
 
 Nearby people talking and music vocals may remain: the model preserves speech
 and does not identify a particular speaker. Use headphones so your call
@@ -115,8 +156,8 @@ Physical microphone ──▶ DPDFNet2 ──▶ LucidMic Microphone ──▶ Y
 ```
 
 [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) and ONNX Runtime run the
-[DPDFNet2](https://github.com/ceva-ip/DPDFNet) model. The engine buffers **70 ms**
-of audio; your devices and call app can add further delay. The same engine is
+[DPDFNet2](https://github.com/ceva-ip/DPDFNet) model. The engine adds **72 ms**
+of delay; your devices and call app can add more. The same engine is
 used by the app, the file-processing tool, and the tests.
 
 ## Build from source
@@ -128,7 +169,7 @@ With full Xcode and Swift 6 or later on an Apple silicon Mac, plus
 git clone https://github.com/sultanovazamat/LucidMic.git
 cd LucidMic
 scripts/check.sh          # pinned dependencies, format/lint, build, tests
-scripts/build.sh 1.0.1    # checked DMG, corresponding source, and checksums
+scripts/build.sh 1.0.2    # local candidate DMG, corresponding source, and checksums
 ```
 
 Select Xcode as your active developer directory. The build downloads pinned
@@ -146,7 +187,9 @@ The README images are labelled previews rendered from the real menu commands
 with a sample microphone. They illustrate the layout without recording audio;
 macOS supplies the installed app's menu appearance.
 
-For the offline file-processing tool, run `swift run lucidmic-file` to see usage.
+For the offline file-processing tool, run `swift run lucidmic-file input.wav output.wav`.
+It mixes all input channels into mono, converts to 48 kHz, and preserves the
+recording's duration and ending without adding the live engine's delay.
 The source layout and release steps are in [CONTRIBUTING.md](CONTRIBUTING.md).
 Runtime build provenance is in [docs/runtime-build.md](docs/runtime-build.md).
 

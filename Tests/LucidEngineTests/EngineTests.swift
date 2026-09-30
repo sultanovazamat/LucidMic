@@ -9,7 +9,7 @@ private let modelPath = URL(fileURLWithPath: #filePath)
     .appendingPathComponent("build/deps/dpdfnet2_48khz_hr.onnx").path
 
 private func process(_ input: [Float], block: Int, bypass: Bool = false) -> [Float] {
-    let routing = LucidRouting(inputBuffer: 0, outputFirstBuffer: 0, outputBufferCount: 1)
+    let routing = LucidRouting(inputBuffer: 0, inputChannel: 0, outputFirstBuffer: 0, outputBufferCount: 1)
     guard let engine = lucid_engine_create(routing, modelPath) else {
         Issue.record("model not found at \(modelPath) — run scripts/fetch-deps.sh")
         return []
@@ -68,8 +68,8 @@ private func noise(seconds: Double, amplitude: Float) -> [Float] {
         #expect(Date().timeIntervalSince(started) < 5.0)  // measured ≈ 1.8 s on an M3 Pro
     }
 
-    @Test func latencyIsSeventyMilliseconds() {
-        #expect(lucid_engine_latency_frames() == 3360)  // 40 ms model + 30 ms hand-off buffer
+    @Test func latencyIsSeventyTwoMilliseconds() {
+        #expect(lucid_engine_latency_frames() == 3456)  // 40 ms model + 32 ms hand-off buffer
     }
 
     @Test func switchedOffPassesAudioThroughUnchangedWithTheSameDelay() {
@@ -85,7 +85,7 @@ private func noise(seconds: Double, amplitude: Float) -> [Float] {
     @Test func liveModeMatchesOfflineOutputWithoutDropouts() throws {
         let input = noise(seconds: 1, amplitude: 0.05)
         let reference = process(input, block: 480)
-        let routing = LucidRouting(inputBuffer: 0, outputFirstBuffer: 0, outputBufferCount: 1)
+        let routing = LucidRouting(inputBuffer: 0, inputChannel: 0, outputFirstBuffer: 0, outputBufferCount: 1)
         let engine = try #require(lucid_engine_create(routing, modelPath))
         defer { lucid_engine_destroy(engine) }
         #expect(lucid_engine_start_worker(engine))

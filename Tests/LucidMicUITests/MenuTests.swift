@@ -37,8 +37,8 @@ struct MenuTests {
         #expect(menu.setupHint.isHidden)
     }
 
-    @Test(arguments: [MenuActivity.starting, .installing, .removing])
-    func busyOperationsCannotBeStartedTwice(activity: MenuActivity) {
+    @Test(arguments: [MenuActivity.starting, .installing, .removing, .stopping])
+    func busyStatesDisableTheNoiseRemovalCommand(activity: MenuActivity) {
         let menu = NativeMenu()
         menu.update(MenuState(activity: activity, driverInstalled: true))
 

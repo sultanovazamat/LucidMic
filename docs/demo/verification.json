@@ -1,0 +1,104 @@
+[
+  {
+    "id": "typing",
+    "original": {
+      "frames": 101120,
+      "sample_rate_hz": 16000,
+      "duration_seconds": 6.32,
+      "peak_dbfs": -3.768,
+      "clipped_samples": 0
+    },
+    "lucidmic": {
+      "frames": 303360,
+      "sample_rate_hz": 48000,
+      "duration_seconds": 6.32,
+      "peak_dbfs": -3.947,
+      "clipped_samples": 0
+    }
+  },
+  {
+    "id": "cafeteria",
+    "original": {
+      "frames": 90560,
+      "sample_rate_hz": 16000,
+      "duration_seconds": 5.66,
+      "peak_dbfs": -8.663,
+      "clipped_samples": 0
+    },
+    "lucidmic": {
+      "frames": 271680,
+      "sample_rate_hz": 48000,
+      "duration_seconds": 5.66,
+      "peak_dbfs": -8.865,
+      "clipped_samples": 0
+    }
+  },
+  {
+    "id": "copier",
+    "original": {
+      "frames": 80000,
+      "sample_rate_hz": 16000,
+      "duration_seconds": 5.0,
+      "peak_dbfs": -0.035,
+      "clipped_samples": 0
+    },
+    "lucidmic": {
+      "frames": 240000,
+      "sample_rate_hz": 48000,
+      "duration_seconds": 5.0,
+      "peak_dbfs": -0.0,
+      "clipped_samples": 15
+    }
+  },
+  {
+    "id": "office",
+    "original": {
+      "frames": 90240,
+      "sample_rate_hz": 16000,
+      "duration_seconds": 5.64,
+      "peak_dbfs": -14.512,
+      "clipped_samples": 0
+    },
+    "lucidmic": {
+      "frames": 270720,
+      "sample_rate_hz": 48000,
+      "duration_seconds": 5.64,
+      "peak_dbfs": -15.982,
+      "clipped_samples": 0
+    }
+  },
+  {
+    "id": "clatter",
+    "original": {
+      "frames": 228480,
+      "sample_rate_hz": 16000,
+      "duration_seconds": 14.28,
+      "peak_dbfs": -2.661,
+      "clipped_samples": 0
+    },
+    "lucidmic": {
+      "frames": 685440,
+      "sample_rate_hz": 48000,
+      "duration_seconds": 14.28,
+      "peak_dbfs": -8.663,
+      "clipped_samples": 0
+    }
+  },
+  {
+    "id": "quiet",
+    "original": {
+      "frames": 82560,
+      "sample_rate_hz": 16000,
+      "duration_seconds": 5.16,
+      "peak_dbfs": -4.169,
+      "clipped_samples": 0
+    },
+    "lucidmic": {
+      "frames": 247680,
+      "sample_rate_hz": 48000,
+      "duration_seconds": 5.16,
+      "peak_dbfs": -4.067,
+      "clipped_samples": 0
+    }
+  }
+]

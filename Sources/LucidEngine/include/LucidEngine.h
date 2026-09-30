@@ -12,7 +12,8 @@ typedef struct LucidEngine LucidEngine;
 
 /// Where the IOProc finds the mic (input) and the feed (output) in the aggregate's buffer lists.
 typedef struct LucidRouting {
-    uint32_t inputBuffer;       // mic stream index in the input list (channel 0 is used)
+    uint32_t inputBuffer;       // mic stream index in the input list
+    uint32_t inputChannel;      // selected channel within that interleaved stream
     uint32_t outputFirstBuffer; // first feed stream index in the output list
     uint32_t outputBufferCount; // number of feed streams
 } LucidRouting;
@@ -21,7 +22,7 @@ typedef struct LucidRouting {
 LucidEngine *lucid_engine_create(LucidRouting routing, const char *modelPath);
 void lucid_engine_destroy(LucidEngine *engine);
 
-/// Output lags input by this many samples at 48 kHz (model 40 ms + 20 ms hand-off buffer).
+/// Output lags input by this many samples at 48 kHz (model 40 ms + 32 ms hand-off buffer).
 uint32_t lucid_engine_latency_frames(void);
 
 /// Noise removal on (false) or off (true). Safe from any thread while audio runs; the switch
@@ -33,6 +34,9 @@ void lucid_engine_set_bypass(LucidEngine *engine, bool bypass);
 void lucid_engine_process(LucidEngine *engine, const float *in, float *out, uint32_t frames);
 
 /// Live mode: starts the worker thread and registers lucid_engine_ioproc on an aggregate device.
+/// The caller must confirm 48 kHz and a callback size of 1...512 frames before starting the device.
+/// Oversized callbacks output silence. Underruns/overruns reset and re-prime the pipeline on the worker,
+/// restoring its declared latency after a brief interruption instead of retaining stale audio.
 OSStatus lucid_engine_start_live(LucidEngine *engine, AudioObjectID device, AudioDeviceIOProcID *outProc);
 /// Starts only the model's worker thread (lucid_engine_start_live does this for you).
 bool lucid_engine_start_worker(LucidEngine *engine);
@@ -44,5 +48,5 @@ OSStatus lucid_engine_ioproc(AudioObjectID device, const AudioTimeStamp *now, co
                              const AudioTimeStamp *inputTime, AudioBufferList *output,
                              const AudioTimeStamp *outputTime, void *clientData);
 
-/// Samples the audio thread had to fill with silence because the worker was late (health counter).
+/// Missing samples when the audio thread detected a worker underrun (health counter).
 uint64_t lucid_engine_underruns(const LucidEngine *engine);

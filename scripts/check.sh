@@ -10,4 +10,5 @@ uv run --no-project --with-requirements requirements-dev.txt ruff check scripts
 shellcheck scripts/*.sh
 plutil -lint Resources/Info.plist
 swift build
+uv run --no-project --with-requirements requirements-dev.txt python -m unittest discover -s scripts/tests -v
 swift test
