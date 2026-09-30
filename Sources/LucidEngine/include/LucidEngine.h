@@ -2,6 +2,7 @@
 #pragma once
 
 #include <CoreAudio/CoreAudio.h>
+#include <stdbool.h>
 #include <stdint.h>
 
 typedef struct LucidEngine LucidEngine;
@@ -19,6 +20,10 @@ void lucid_engine_destroy(LucidEngine *engine);
 /// Mono 48 kHz in -> denoised mono out, any block size. Output lags input by lucid_engine_latency_frames().
 void lucid_engine_process(LucidEngine *engine, const float *in, float *out, uint32_t frames);
 uint32_t lucid_engine_latency_frames(void);
+
+/// Noise removal on (false) or off (true). Safe to call from any thread while audio runs;
+/// the switch crossfades over 10 ms and keeps the same latency, so it is click-free mid-recording.
+void lucid_engine_set_bypass(LucidEngine *engine, bool bypass);
 
 /// Registers the engine's IOProc on an aggregate device.
 OSStatus lucid_engine_create_ioproc(AudioObjectID device, LucidEngine *engine, AudioDeviceIOProcID *outProc);

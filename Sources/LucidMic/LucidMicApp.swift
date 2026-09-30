@@ -11,7 +11,7 @@ struct LucidMicApp: App {
         MenuBarExtra {
             MenuView(state: delegate.state)
         } label: {
-            Image(systemName: delegate.state.isOn ? "waveform.circle.fill" : "waveform.circle")
+            Image(systemName: delegate.state.isCleaning ? "waveform.circle.fill" : "waveform.circle")
         }
         .menuBarExtraStyle(.window)
     }
@@ -32,7 +32,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 @MainActor
 @Observable
 final class AppState {
-    private(set) var isOn = false
+    /// LucidMic Microphone is live and is the default mic.
+    private(set) var isRouting = false
+    /// Noise removal is on (the switch). Off means the voice passes through unchanged.
+    private(set) var isCleaning = false
     private(set) var isBusy = false
     private(set) var status = "Off"
     private(set) var driverInstalled = false
@@ -47,9 +50,13 @@ final class AppState {
 
     func refresh() { driverInstalled = AudioSystem.device(uid: LucidDevice.feedUID) != nil }
 
+    /// The switch. Once routing, it only flips noise removal, so apps keep hearing LucidMic Microphone
+    /// and you can turn it on and off mid-recording to demo the difference.
     func toggle() async {
-        if isOn {
-            turnOff()
+        if isRouting {
+            isCleaning.toggle()
+            router.setCleaning(isCleaning)
+            status = statusText()
             return
         }
         isBusy = true
@@ -85,20 +92,30 @@ final class AppState {
         }
         do {
             try router.start(mic: mic, feed: feed)
-            AudioSystem.setDefaultInput(lucidMic)  // every app on the default mic now hears the clean voice
-            isOn = true
-            status = "Cleaning \(mic.name)"
+            AudioSystem.setDefaultInput(lucidMic)  // every app on the default mic now hears LucidMic
+            micName = mic.name
+            isRouting = true
+            isCleaning = true
+            status = statusText()
         } catch {
             router.stop()
             status = error.localizedDescription
         }
     }
 
+    /// Stops LucidMic Microphone and gives the default back to the real mic (on quit and uninstall).
     func turnOff() {
         router.stop()
         restoreDefaultInput()
-        isOn = false
+        isRouting = false
+        isCleaning = false
         status = "Off"
+    }
+
+    private var micName = ""
+
+    private func statusText() -> String {
+        isCleaning ? "Removing noise from \(micName)" : "Noise removal off — your voice passes through unchanged"
     }
 
     func uninstall() {
@@ -170,18 +187,21 @@ struct MenuView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text("LucidMic").font(.headline)
+                Text("Noise removal").font(.headline)
                 Spacer()
                 if state.isBusy { ProgressView().controlSize(.small) }
-                Toggle("", isOn: Binding(get: { state.isOn }, set: { _ in Task { await state.toggle() } }))
+                Toggle("", isOn: Binding(get: { state.isCleaning }, set: { _ in Task { await state.toggle() } }))
                     .toggleStyle(.switch)
                     .labelsHidden()
                     .disabled(state.isBusy)
             }
             Text(state.status).font(.callout).foregroundStyle(.secondary)
-            if state.isOn {
-                Text("Apps using the default microphone now hear your clean voice. In Zoom, pick “Same as System”.")
-                    .font(.caption).foregroundStyle(.secondary)
+            if state.isRouting {
+                Text(
+                    "Apps using “LucidMic Microphone” or the default mic hear this. Flip the switch anytime, even mid-call. Quit to go back to your normal mic."
+                )
+                .font(.caption).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
             } else if !state.driverInstalled {
                 Text("First time: LucidMic installs its microphone and asks for your password once.")
                     .font(.caption).foregroundStyle(.secondary)

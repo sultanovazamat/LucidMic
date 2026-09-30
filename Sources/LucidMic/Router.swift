@@ -44,6 +44,11 @@ final class Router {
         }
     }
 
+    /// Noise removal on/off while audio keeps flowing (click-free; same latency either way).
+    func setCleaning(_ cleaning: Bool) {
+        if let engine { lucid_engine_set_bypass(engine, !cleaning) }
+    }
+
     func stop() {
         if aggregate != kAudioObjectUnknown {
             if let proc {

@@ -2,9 +2,10 @@ import Foundation
 import LucidEngine
 import Testing
 
-private func process(_ input: [Float], block: Int) -> [Float] {
+private func process(_ input: [Float], block: Int, bypass: Bool = false) -> [Float] {
     let engine = lucid_engine_create(LucidRouting(inputBuffer: 0, outputFirstBuffer: 0, outputBufferCount: 1))!
     defer { lucid_engine_destroy(engine) }
+    lucid_engine_set_bypass(engine, bypass)
     var output = [Float](repeating: 0, count: input.count)
     var start = 0
     while start < input.count {
@@ -57,7 +58,16 @@ private func noise(seconds: Double, amplitude: Float) -> [Float] {
         #expect(Date().timeIntervalSince(started) < 1.0)  // 10 s of audio in under 1 s
     }
 
-    @Test func latencyIsOneRNNoiseFrame() {
-        #expect(lucid_engine_latency_frames() == 480)
+    @Test func latencyIsThirtyMilliseconds() {
+        #expect(lucid_engine_latency_frames() == 1440)
+    }
+
+    @Test func bypassPassesAudioThroughUnchangedWithTheSameDelay() {
+        let input = noise(seconds: 1, amplitude: 0.05)
+        let out = process(input, block: 256, bypass: true)
+        let delay = Int(lucid_engine_latency_frames())
+        // The first frame after start ramps from denoised to original; compare after it settles.
+        let maxError = (960..<(input.count - delay)).map { abs(out[$0 + delay] - input[$0]) }.max() ?? 1
+        #expect(maxError < 1e-6)
     }
 }

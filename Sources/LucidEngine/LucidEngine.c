@@ -1,6 +1,7 @@
 #include "LucidEngine.h"
 
 #include <rnnoise.h>
+#include <stdatomic.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -18,9 +19,18 @@ struct LucidEngine {
     float out[kOutCapacity]; // FIFO of denoised samples
     uint32_t outRead, outCount;
     float scratchIn[kMaxBlock], scratchOut[kMaxBlock];
+    _Atomic bool bypass;
+    float wet;                // 1 = denoised, 0 = original; ramps on switch
+    float dry[2][kFrame];     // last two input frames: RNNoise itself delays audio by two frames
+    uint32_t dryIndex;
 };
 
-uint32_t lucid_engine_latency_frames(void) { return kFrame; }
+// One frame of FIFO priming plus RNNoise's own two-frame delay (measured: 1440 samples = 30 ms).
+uint32_t lucid_engine_latency_frames(void) { return 3 * kFrame; }
+
+void lucid_engine_set_bypass(LucidEngine *e, bool bypass) {
+    atomic_store_explicit(&e->bypass, bypass, memory_order_relaxed);
+}
 
 LucidEngine *lucid_engine_create(LucidRouting routing) {
     LucidEngine *e = calloc(1, sizeof(LucidEngine));
@@ -32,6 +42,8 @@ LucidEngine *lucid_engine_create(LucidRouting routing) {
         return NULL;
     }
     e->outCount = kFrame; // prime with one frame of silence so output never underruns
+    e->wet = 1.0f;
+    atomic_init(&e->bypass, false);
     return e;
 }
 
@@ -46,11 +58,18 @@ static void process_block(LucidEngine *e, const float *in, float *out, uint32_t 
     for (uint32_t i = 0; i < frames; ++i) {
         e->inFrame[e->inCount++] = in[i] * 32768.0f; // RNNoise works in 16-bit sample scale
         if (e->inCount == kFrame) {
-            rnnoise_process_frame(e->rnnoise, denoised, e->inFrame);
+            rnnoise_process_frame(e->rnnoise, denoised, e->inFrame);  // always run: keeps the model warm
+            const float *original = e->dry[e->dryIndex];  // input from two frames ago, aligned with `denoised`
+            const float target = atomic_load_explicit(&e->bypass, memory_order_relaxed) ? 0.0f : 1.0f;
             for (uint32_t k = 0; k < kFrame; ++k) {
-                e->out[(e->outRead + e->outCount) % kOutCapacity] = denoised[k] / 32768.0f;
+                const float wet = e->wet + (target - e->wet) * (float)(k + 1) / kFrame;
+                const float sample = wet * denoised[k] + (1.0f - wet) * original[k];
+                e->out[(e->outRead + e->outCount) % kOutCapacity] = sample / 32768.0f;
                 e->outCount++;
             }
+            e->wet = target;
+            memcpy(e->dry[e->dryIndex], e->inFrame, sizeof(e->inFrame));
+            e->dryIndex ^= 1;
             e->inCount = 0;
         }
     }
