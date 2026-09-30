@@ -18,3 +18,4 @@ bench/data/
 bench/results/
 # Secrets
 .env
+third_party/
