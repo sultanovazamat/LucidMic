@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "source": {
+    "dataset": "Microsoft DNS Challenge \u2014 INTERSPEECH 2020 initial test set",
+    "collection": "Microsoft real recordings (ms_realrec_speakerphone)",
+    "revision": "70f19285c36cca4df2338f9248775ddc50980c6b",
+    "description_url": "https://github.com/microsoft/DNS-Challenge/blob/70f19285c36cca4df2338f9248775ddc50980c6b/datasets/test_set/README.md",
+    "repository_url": "https://github.com/microsoft/DNS-Challenge",
+    "license": "CC-BY-4.0",
+    "license_url": "https://github.com/microsoft/DNS-Challenge/blob/70f19285c36cca4df2338f9248775ddc50980c6b/LICENSE",
+    "attribution": "Microsoft and DNS Challenge contributors"
+  },
+  "selection": "Six complete clips selected by the upstream recording-condition labels before processing. No ranking by improvement, no TTS, no added noise, and no normalization. These are illustrative examples, not a benchmark.",
+  "processing": {
+    "app_version": "1.0.2 candidate",
+    "app_commit": "8161529d91e4cf7c5b5407755a0e16a98191d064",
+    "command": "swift run -c release lucidmic-file <original.wav> <lucidmic.wav> build/deps/dpdfnet2_48khz_hr.onnx",
+    "model": "DPDFNet2 48 kHz HR",
+    "model_sha256": "0b399f8a58dc4d70d8cd97541f5c39869406145193b957d00a03b66070944928",
+    "changes": "Resampled from 16 kHz to 48 kHz by the app file processor; denoised; initial engine delay trimmed and ending flushed; 16-bit mono PCM. Complete original duration retained. No extra gain or post-processing.",
+    "source_hashes": {
+      "Sources/LucidEngine/LucidEngine.c": "0ede706a4b3a9bc924d429166b90d6e89f7a9b91c31eb876505a72d35424b9e8",
+      "Sources/LucidEngine/include/LucidEngine.h": "715d87cee8f4f916a80593751af59cc58eabf2b8cdaeac6a994dcc1a5a45cb24",
+      "Sources/LucidFileProcessing/AudioFileProcessor.swift": "093add0e230e8a613826beb1dd5c6de3df84c1fb01e837894ef80d9404e1f9e8",
+      "Sources/lucidmic-file/main.swift": "87f41b5f5798e9d08ee173ee02370d04c27cd789562d97039afc66d619cd607b"
+    },
+    "runtime_hashes": {
+      "libsherpa-onnx-c-api.dylib": "ae729669633008692c670d4e4c942db7ea5bdc38abc2f479516062d48849e9d1",
+      "libonnxruntime.dylib": "3567d114f7299d559993e536d605a6f46d7bc9d2542004accc80ee9bf5457f0b"
+    }
+  },
+  "samples": [
+    {
+      "id": "typing",
+      "title": "Keyboard typing",
+      "source_filename": "ms_realrec_speakerphone_joyce_typing_-01.wav",
+      "source_url": "https://media.githubusercontent.com/media/microsoft/DNS-Challenge/70f19285c36cca4df2338f9248775ddc50980c6b/datasets/test_set/real_recordings/ms_realrec_speakerphone_joyce_typing_-01.wav",
+      "source_sha256": "a7de0c865a6a3b5943fa4c08e54ef24cf83a851514855919ee7207bac79c4a0c",
+      "description": "Speech recorded with keyboard noise, using a speakerphone capture.",
+      "source_sample_rate_hz": 16000,
+      "processed_sha256": "3cf7d1b6da878a6ebbe5ee18088fbf61c84925567ad8b4858f37bff994470b25"
+    },
+    {
+      "id": "cafeteria",
+      "title": "Caf\u00e9 conversation",
+      "source_filename": "ms_realrec_speakerphone_Senja_cafee_-01_SurfaceBook.wav",
+      "source_url": "https://media.githubusercontent.com/media/microsoft/DNS-Challenge/70f19285c36cca4df2338f9248775ddc50980c6b/datasets/test_set/real_recordings/ms_realrec_speakerphone_Senja_cafee_-01_SurfaceBook.wav",
+      "source_sha256": "28661ec7bbe148490f8ea51fd734a51dbae1399a99f8bb88c75563db83296bcd",
+      "description": "Speech recorded in a caf\u00e9, using a Surface Book capture. Background voices are a harder case.",
+      "source_sample_rate_hz": 16000,
+      "processed_sha256": "8eed15251003e18f6c99cdbe1a916915585724cad04a8c38a3ec8f8d926fcdd5"
+    },
+    {
+      "id": "copier",
+      "title": "A copier in the background",
+      "source_filename": "ms_realrec_speakerphone_Puneet_CopyMachine_s11_surface.wav",
+      "source_url": "https://media.githubusercontent.com/media/microsoft/DNS-Challenge/70f19285c36cca4df2338f9248775ddc50980c6b/datasets/test_set/real_recordings/ms_realrec_speakerphone_Puneet_CopyMachine_s11_surface.wav",
+      "source_sha256": "cdabf131d095e989da285f292da7dd5331b1c5acae46cbd5f5068a4bd3469432",
+      "description": "Speech recorded near a copy machine, using a Surface capture.",
+      "source_sample_rate_hz": 16000,
+      "processed_sha256": "37b55c8657c34df3ea63390677e69233f1c04341a24aab15171e7fdd22c37a9d"
+    },
+    {
+      "id": "office",
+      "title": "An open office",
+      "source_filename": "ms_realrec_speakerphone_ergoe_OpenOffice_s10_MSCinemaWebcam.wav",
+      "source_url": "https://media.githubusercontent.com/media/microsoft/DNS-Challenge/70f19285c36cca4df2338f9248775ddc50980c6b/datasets/test_set/real_recordings/ms_realrec_speakerphone_ergoe_OpenOffice_s10_MSCinemaWebcam.wav",
+      "source_sha256": "28b58a6c984a1b8bad3789ebe1e470843756f0ef00143be190b8decf7cc337f9",
+      "description": "Speech recorded in an open office, using an MS Cinema webcam capture.",
+      "source_sample_rate_hz": 16000,
+      "processed_sha256": "aed5096b14d19cdb3b4c2715add31ad5547537874057eb569cc595753204de08"
+    },
+    {
+      "id": "clatter",
+      "title": "Speech with clatter",
+      "source_filename": "ms_realrec_speakerphone_speakerphone_clatter_senja_1.wav",
+      "source_url": "https://media.githubusercontent.com/media/microsoft/DNS-Challenge/70f19285c36cca4df2338f9248775ddc50980c6b/datasets/test_set/real_recordings/ms_realrec_speakerphone_speakerphone_clatter_senja_1.wav",
+      "source_sha256": "8bf8b0474f9ee1bc577e0d7a7d35bdb6e307a6767544c7daa17b547c5e9bb08d",
+      "description": "Speech with clattering sounds, from the speakerphone recordings.",
+      "source_sample_rate_hz": 16000,
+      "processed_sha256": "83718d0b9c66cd861d3c9b5c56aef57bd4b8d5bce561ebfd689372af335f15c2"
+    },
+    {
+      "id": "quiet",
+      "title": "Quiet-room speech",
+      "source_filename": "ms_realrec_speakerphone_Ashkan_Clean_S10_SurfaceBook.wav",
+      "source_url": "https://media.githubusercontent.com/media/microsoft/DNS-Challenge/70f19285c36cca4df2338f9248775ddc50980c6b/datasets/test_set/real_recordings/ms_realrec_speakerphone_Ashkan_Clean_S10_SurfaceBook.wav",
+      "source_sha256": "46e1040844c7c773324f833ccbb856a94af8668485177cce667d5ca450ab5d79",
+      "description": "A recording labeled clean by the source dataset, using a Surface Book capture. Compare the voice itself.",
+      "source_sample_rate_hz": 16000,
+      "processed_sha256": "ad4761b4d6d92462775df1ca8d39b867db81326f5332b7f5e0487dc32c3f1c41"
+    }
+  ]
+}

@@ -25,6 +25,27 @@
 The usage and build instructions below describe this checkout; see the
 [1.0.2 changes](docs/releases/1.0.2.md).
 
+## Hear the difference
+
+Real people speaking while typing, in a café, and around office noise.
+These complete Microsoft DNS Challenge recordings are processed with the
+1.0.2 candidate's actual engine. No TTS, added noise, or level normalization.
+
+| Recording | Duration | Before | After |
+| --- | ---: | --- | --- |
+| Keyboard typing | 6.32 s | [Original WAV](docs/demo/audio/typing-original.wav) | [LucidMic WAV](docs/demo/audio/typing-lucidmic.wav) |
+| Café conversation | 5.66 s | [Original WAV](docs/demo/audio/cafeteria-original.wav) | [LucidMic WAV](docs/demo/audio/cafeteria-lucidmic.wav) |
+| Copier | 5.00 s | [Original WAV](docs/demo/audio/copier-original.wav) | [LucidMic WAV](docs/demo/audio/copier-lucidmic.wav) |
+| Open office | 5.64 s | [Original WAV](docs/demo/audio/office-original.wav) | [LucidMic WAV](docs/demo/audio/office-lucidmic.wav) |
+| Clatter | 14.28 s | [Original WAV](docs/demo/audio/clatter-original.wav) | [LucidMic WAV](docs/demo/audio/clatter-lucidmic.wav) |
+| Quiet-room control | 5.16 s | [Original WAV](docs/demo/audio/quiet-original.wav) | [LucidMic WAV](docs/demo/audio/quiet-lucidmic.wav) |
+
+The sources are 16 kHz recordings; processed files are saved at 48 kHz with
+the engine delay removed. These illustrate offline processing. The copier
+example retains a small amount of output clipping.
+Audio: Microsoft and DNS Challenge contributors, [CC BY 4.0](docs/demo/LICENSE-audio.txt).
+[Source credits, measurements, and reproduction steps](docs/demo/README.md).
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/hero-dark.png">
   <img alt="LucidMic menu preview: checked Noise Removal, current microphone, Settings, Help, About, and Quit" src="docs/assets/hero-light.png">
