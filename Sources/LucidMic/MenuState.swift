@@ -4,11 +4,12 @@ enum MenuActivity: Equatable {
     case starting
     case installing
     case removing
+    case stopping
     case running(microphone: String, cleaning: Bool)
 
     var isBusy: Bool {
         switch self {
-        case .starting, .installing, .removing: true
+        case .starting, .installing, .removing, .stopping: true
         case .idle, .running: false
         }
     }
@@ -34,6 +35,7 @@ enum MenuActivity: Equatable {
         case .starting: "Starting microphone…"
         case .installing: "Setting up microphone…"
         case .removing: "Removing virtual microphone…"
+        case .stopping: "Stopping microphone…"
         case .running(_, true): "Removing noise"
         case .running(_, false): "Passing original audio"
         }

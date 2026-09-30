@@ -29,8 +29,13 @@ let package = Package(
                 .linkedFramework("ServiceManagement"),
             ]
         ),
-        .executableTarget(name: "lucidmic-file", dependencies: ["LucidEngine"]),
-        .testTarget(name: "LucidEngineTests", dependencies: ["LucidEngine"]),
+        .target(name: "LucidFileProcessing", dependencies: ["LucidEngine"]),
+        .executableTarget(name: "lucidmic-file", dependencies: ["LucidEngine", "LucidFileProcessing"]),
+        .target(
+            name: "LucidEngineTestSupport", dependencies: ["LucidEngine"], path: "Tests/LucidEngineTestSupport",
+            cSettings: [.unsafeFlags(["-I\(deps)/include"])]),
+        .testTarget(name: "LucidEngineTests", dependencies: ["LucidEngine", "LucidEngineTestSupport"]),
+        .testTarget(name: "LucidFileTests", dependencies: ["LucidFileProcessing", "LucidEngine"]),
         .testTarget(name: "LucidMicUITests", dependencies: ["LucidMic"]),
     ]
 )

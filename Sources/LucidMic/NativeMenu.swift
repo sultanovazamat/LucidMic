@@ -32,7 +32,7 @@ final class NativeMenu {
         ]
         for (item, command) in commands {
             item.target = target
-            item.action = Selector(("handleMenuAction:"))
+            item.action = NSSelectorFromString("handleMenuAction:")
             item.representedObject = command.rawValue
             item.keyEquivalentModifierMask = .command
             item.isEnabled = true

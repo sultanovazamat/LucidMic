@@ -2,7 +2,7 @@
 # Builds dist/LucidMic-<version>.dmg (drag-to-Applications window). Usage: scripts/build.sh [version]
 set -eu
 cd "$(dirname "$0")/.."
-VERSION="${1:-1.0.1}"
+VERSION="${1:-1.0.2}"
 case "$VERSION" in
     *[!0-9.]*|'') echo "Version must use numeric major.minor.patch format" >&2; exit 1 ;;
 esac

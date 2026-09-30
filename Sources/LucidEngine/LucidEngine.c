@@ -15,10 +15,10 @@ enum {
     kRate = 48000,
     kChunk = 480,        // DPDFNet hop: 10 ms
     kModelDelay = 1920,  // measured: denoised sample j is input sample j - 1920 (40 ms)
-    kHandoff = 1440,     // output priming: the model's first empty chunk + one IO cycle + one cycle of slack
+    kHandoff = 1536,     // 32 ms covers the first empty model chunk and every supported IO/hop alignment
     kRingSize = 16384,   // power of two
     kHistory = 8192,     // power of two, > kModelDelay + a few chunks
-    kMaxBlock = 8192,
+    kMaxLiveBlock = 512,
 };
 
 // Single-producer single-consumer ring of samples.
@@ -53,6 +53,19 @@ static uint32_t ring_count(Ring *r) {
                       atomic_load_explicit(&r->read, memory_order_acquire));
 }
 
+// Only the ring's consumer may discard samples. Counters stay monotonic across resets.
+static void ring_discard(Ring *r) {
+    const uint64_t w = atomic_load_explicit(&r->written, memory_order_acquire);
+    atomic_store_explicit(&r->read, w, memory_order_release);
+}
+
+enum RecoveryState {
+    kRunning,
+    kWorkerNeedsReset,  // worker found a full output ring; callback must first stop using the rings
+    kResetRequested,   // callback is quiescent; worker can discard its input and reset the model
+    kResetReady,       // worker is quiescent; callback can discard its output and restart priming
+};
+
 struct LucidEngine {
     LucidRouting routing;
     const SherpaOnnxOnlineSpeechDenoiser *model;
@@ -65,13 +78,16 @@ struct LucidEngine {
     float wet;  // 1 = denoised, 0 = original; ramps on switch
     _Atomic bool bypass;
     _Atomic uint64_t underruns;
+    _Atomic int recovery;
     // Live mode.
     pthread_t worker;
     bool workerRunning;
     _Atomic bool stop;
     dispatch_semaphore_t wake;
-    float scratchIn[kMaxBlock];
-    float scratchOut[kMaxBlock];
+    // Callback-only state (the synchronous offline path has the same ownership).
+    uint32_t priming;
+    float scratchIn[kMaxLiveBlock];
+    float scratchOut[kMaxLiveBlock];
 };
 
 uint32_t lucid_engine_latency_frames(void) { return kHandoff + kModelDelay; }
@@ -100,8 +116,7 @@ LucidEngine *lucid_engine_create(LucidRouting routing, const char *modelPath) {
     e->routing = routing;
     e->wet = 1.0f;
     e->wake = dispatch_semaphore_create(0);
-    const float silence[kHandoff] = {0};
-    ring_push(&e->out, silence, kHandoff);
+    e->priming = kHandoff;
     return e;
 }
 
@@ -114,7 +129,7 @@ void lucid_engine_destroy(LucidEngine *e) {
 }
 
 // Mixes denoised samples with the time-aligned original (for the switch) and hands them to the audio thread.
-static void mix_and_push(LucidEngine *e, const float *denoised, int32_t n) {
+static bool mix_and_push(LucidEngine *e, const float *denoised, int32_t n) {
     const float target = atomic_load_explicit(&e->bypass, memory_order_relaxed) ? 0.0f : 1.0f;
     float mixed[kChunk];
     for (int32_t start = 0; start < n; start += kChunk) {
@@ -126,23 +141,49 @@ static void mix_and_push(LucidEngine *e, const float *denoised, int32_t n) {
             mixed[k] = wet * denoised[start + k] + (1.0f - wet) * original;
         }
         e->wet = target;
-        ring_push(&e->out, mixed, (uint32_t)len);
+        if (ring_push(&e->out, mixed, (uint32_t)len) != (uint32_t)len) {
+            int expected = kRunning;
+            atomic_compare_exchange_strong_explicit(&e->recovery, &expected, kWorkerNeedsReset,
+                                                     memory_order_release, memory_order_relaxed);
+            return false;
+        }
     }
     e->outputCount += (uint64_t)n;
+    return true;
 }
 
 // Runs the model on every complete 10 ms chunk waiting in the input ring.
 static void run_model(LucidEngine *e) {
     float chunk[kChunk];
-    while (ring_count(&e->in) >= kChunk) {
-        ring_pop(&e->in, chunk, kChunk);
+    for (;;) {
+        const int recovery = atomic_load_explicit(&e->recovery, memory_order_acquire);
+        if (recovery == kResetRequested) {
+            // The callback has stopped pushing input. It will not resume until it observes Ready.
+            ring_discard(&e->in);
+            SherpaOnnxOnlineSpeechDenoiserReset(e->model);
+            memset(e->history, 0, sizeof e->history);
+            e->inputCount = e->outputCount = 0;
+            e->wet = atomic_load_explicit(&e->bypass, memory_order_relaxed) ? 0.0f : 1.0f;
+            atomic_store_explicit(&e->recovery, kResetReady, memory_order_release);
+            return;
+        }
+        if (recovery != kRunning || ring_count(&e->in) < kChunk) return;
+        if (ring_pop(&e->in, chunk, kChunk) != kChunk) return;
         for (uint32_t k = 0; k < kChunk; ++k) e->history[(e->inputCount + k) & (kHistory - 1)] = chunk[k];
         e->inputCount += kChunk;
         const SherpaOnnxDenoisedAudio *audio = SherpaOnnxOnlineSpeechDenoiserRun(e->model, chunk, kChunk, kRate);
         if (!audio) continue;  // the model returns nothing for its very first chunk
-        mix_and_push(e, audio->samples, audio->n);
+        const bool pushed = mix_and_push(e, audio->samples, audio->n);
         SherpaOnnxDestroyDenoisedAudio(audio);
+        if (!pushed) return;
     }
+}
+
+static uint32_t take_output(LucidEngine *e, float *out, uint32_t frames) {
+    const uint32_t silence = e->priming < frames ? e->priming : frames;
+    memset(out, 0, silence * sizeof(float));
+    e->priming -= silence;
+    return silence + ring_pop(&e->out, out + silence, frames - silence);
 }
 
 void lucid_engine_process(LucidEngine *e, const float *in, float *out, uint32_t frames) {
@@ -150,12 +191,21 @@ void lucid_engine_process(LucidEngine *e, const float *in, float *out, uint32_t 
         const uint32_t n = frames < 4096 ? frames : 4096;
         ring_push(&e->in, in, n);
         run_model(e);
-        const uint32_t got = ring_pop(&e->out, out, n);
+        const uint32_t got = take_output(e, out, n);
         if (got < n) memset(out + got, 0, (n - got) * sizeof(float));
         in += n;
         out += n;
         frames -= n;
     }
+}
+
+// Audio-thread only. A reset never changes the producer's ring counter from the consumer thread.
+static void request_recovery(LucidEngine *e) {
+    const int recovery = atomic_load_explicit(&e->recovery, memory_order_acquire);
+    if (recovery == kRunning || recovery == kWorkerNeedsReset) {
+        atomic_store_explicit(&e->recovery, kResetRequested, memory_order_release);
+    }
+    dispatch_semaphore_signal(e->wake);
 }
 
 // Real-time scheduling so the model reliably finishes each 10 ms chunk in time.
@@ -194,20 +244,42 @@ OSStatus lucid_engine_ioproc(AudioObjectID device, const AudioTimeStamp *now, co
     for (UInt32 b = 0; b < output->mNumberBuffers; ++b) {
         if (output->mBuffers[b].mData) memset(output->mBuffers[b].mData, 0, output->mBuffers[b].mDataByteSize);
     }
-    if (!input || r.inputBuffer >= input->mNumberBuffers) return noErr;
+    if (!input || r.inputBuffer >= input->mNumberBuffers) {
+        request_recovery(e);
+        return noErr;
+    }
 
     const AudioBuffer *in = &input->mBuffers[r.inputBuffer];
-    const UInt32 inCh = in->mNumberChannels ? in->mNumberChannels : 1;
-    UInt32 frames = in->mDataByteSize / (sizeof(float) * inCh);
-    if (frames > kMaxBlock) frames = kMaxBlock;
-    const float *src = in->mData;
-    for (UInt32 i = 0; i < frames; ++i) e->scratchIn[i] = src[i * inCh];
+    const UInt32 inCh = in->mNumberChannels;
+    const UInt32 frames = inCh ? in->mDataByteSize / (sizeof(float) * inCh) : 0;
+    if (!frames || frames > kMaxLiveBlock || r.inputChannel >= inCh) {
+        request_recovery(e);
+        return noErr;
+    }
 
-    ring_push(&e->in, e->scratchIn, frames);
-    const uint32_t got = ring_pop(&e->out, e->scratchOut, frames);
+    const int recovery = atomic_load_explicit(&e->recovery, memory_order_acquire);
+    if (recovery == kResetReady) {
+        // The worker stopped publishing output before Ready. Discard all old audio before resuming.
+        ring_discard(&e->out);
+        e->priming = kHandoff;
+        atomic_store_explicit(&e->recovery, kRunning, memory_order_release);
+    } else if (recovery != kRunning) {
+        request_recovery(e);
+        return noErr;
+    }
+
+    const float *src = in->mData;
+    for (UInt32 i = 0; i < frames; ++i) e->scratchIn[i] = src ? src[i * inCh + r.inputChannel] : 0.0f;
+
+    if (ring_push(&e->in, e->scratchIn, frames) != frames) {
+        request_recovery(e);
+        return noErr;
+    }
+    const uint32_t got = take_output(e, e->scratchOut, frames);
     if (got < frames) {
         memset(e->scratchOut + got, 0, (frames - got) * sizeof(float));
         atomic_fetch_add_explicit(&e->underruns, frames - got, memory_order_relaxed);
+        request_recovery(e);
     }
     dispatch_semaphore_signal(e->wake);
 
@@ -215,7 +287,8 @@ OSStatus lucid_engine_ioproc(AudioObjectID device, const AudioTimeStamp *now, co
         const UInt32 b = r.outputFirstBuffer + m;
         if (b >= output->mNumberBuffers) break;
         AudioBuffer *dst = &output->mBuffers[b];
-        const UInt32 ch = dst->mNumberChannels ? dst->mNumberChannels : 1;
+        const UInt32 ch = dst->mNumberChannels;
+        if (!dst->mData || !ch) continue;
         UInt32 n = dst->mDataByteSize / (sizeof(float) * ch);
         if (n > frames) n = frames;
         float *o = dst->mData;
