@@ -1,4 +1,4 @@
-LucidMic 1.0.0
+LucidMic 1.0.1
 Copyright (C) 2026 Azamat Sultanov
 LucidMic source is licensed under GPL-3.0. See LICENSE.
 Source: https://github.com/sultanovazamat/LucidMic
@@ -32,7 +32,7 @@ BlackHole v0.7.1 (customized as LucidMic Microphone / LucidMic Feed)
   input/output visibility, manufacturer, and plug-in factory UUID. Original C
   source is unmodified. Exact customization: scripts/build-driver.sh in LucidMic.
   Corresponding source archive: BlackHole-0.7.1-source.tar.gz, distributed beside
-  the DMG at https://github.com/sultanovazamat/LucidMic/releases/tag/v1.0.0
+  the DMG at https://github.com/sultanovazamat/LucidMic/releases/tag/v1.0.1
 
 Additional code embedded in the distributed sherpa-onnx library
 
@@ -74,7 +74,7 @@ nlohmann-json — v3.12.0
   License/attribution: Licenses/runtime-nlohmann-json-docs-mkdocs-docs-home-license.md.txt
 
 See Runtime-Sources.json for exact revisions, source URLs, and SHA-256 hashes.
-The LucidMic-1.0.0-runtime-source.tar.gz release asset contains those source archives.
+The LucidMic-1.0.1-runtime-source.tar.gz release asset contains those source archives.
 ONNX Runtime v1.28.2 source is separately available from:
 https://github.com/microsoft/onnxruntime/archive/refs/tags/v1.28.2.tar.gz
 Build provenance and required patch: docs/runtime-build.md in the LucidMic repository

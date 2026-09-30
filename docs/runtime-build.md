@@ -1,6 +1,6 @@
 # Runtime source and build provenance
 
-LucidMic 1.0.0 uses the official sherpa-onnx **v1.13.8 macOS arm64 shared**
+LucidMic 1.0.1 uses the official sherpa-onnx **v1.13.8 macOS arm64 shared**
 distribution, including ONNX Runtime **v1.28.2**. Its source bundle contains
 unmodified source archives pinned by `scripts/runtime-sources.json`, with SHA-256
 checksums. The full license notices are bundled in the app.

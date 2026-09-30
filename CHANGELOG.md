@@ -1,8 +1,19 @@
 # Changelog
 
+## 1.0.1 — 2026-09-30
+
+- Native macOS menu with a checkmarked Noise Removal command and grouped actions.
+- Clear idle, cleaning, original-audio, setup, and error states, with the actual input name.
+- Separate Settings window for launch at login and confirmed virtual-microphone removal.
+- Native About panel, offline usage help, and standard keyboard commands.
+- Login-item status refreshes when returning from System Settings.
+- Updated light/dark README previews and focused runtime credits.
+
+The noise-removal model and audio engine are unchanged.
+
 ## 1.0.0 — 2026-09-30
 
-First public release of LucidMic for Apple silicon Macs running macOS 14 or later.
+First packaged release of LucidMic for Apple silicon Macs running macOS 14 or later.
 
 - Local 48 kHz microphone noise removal powered by DPDFNet2.
 - A menu-bar switch that toggles cleaning without disconnecting the microphone.

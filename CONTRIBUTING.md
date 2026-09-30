@@ -11,15 +11,16 @@ If an audio sample helps, make a short recording specifically for the report.
 
 ## Project layout
 
-- `Sources/LucidMic`: menu-bar UI, device discovery, and audio routing.
+- `Sources/LucidMic`: native menu, SwiftUI Settings, device discovery, and audio routing.
 - `Sources/LucidEngine`: C audio engine and inference worker.
 - `Sources/lucidmic-file`: offline file-processing tool.
 - `Tests/LucidEngineTests`: engine behavior and live/offline parity tests.
+- `Tests/LucidMicUITests`: menu state, native command layout, and keyboard dispatch tests.
 - `Resources`: logo, installer art, app metadata, and dependency licenses.
 - `scripts`: pinned dependencies, artwork, checks, driver build, and DMG packaging.
 - `docs/plans`: historical development notes; the README describes shipped behavior.
 
-Use `xcrun swift-format format --in-place --recursive Sources Tests Package.swift`
+Use `xcrun swift-format format --in-place --recursive Sources Tests Package.swift scripts/render-menu.swift`
 for Swift and `uv run --no-project --with-requirements requirements-dev.txt ruff format scripts`
 for Python. Shell scripts are checked by ShellCheck.
 

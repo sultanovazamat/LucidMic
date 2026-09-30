@@ -134,7 +134,7 @@ def make_background(scale: int) -> Image.Image:
 
 
 def make_ui_previews() -> None:
-    """Frame the actual native UI snapshots for light/dark README appearances."""
+    """Frame the menu illustrations for light/dark README appearances."""
     for mode, top, bottom in (
         ("light", (228, 237, 252), (244, 240, 234)),
         ("dark", (14, 23, 40), (25, 29, 37)),
@@ -152,6 +152,13 @@ def make_ui_previews() -> None:
         ImageDraw.Draw(mask).rounded_rectangle((0, 0, card.width - 1, card.height - 1), radius=24, fill=255)
         card.putalpha(ImageChops.multiply(card.getchannel("A"), mask))
         canvas.alpha_composite(card, (x, y))
+        ImageDraw.Draw(canvas).text(
+            (canvas.width / 2, canvas.height - 26),
+            "Menu preview · Noise removal on",
+            font=font(18),
+            fill=(177, 190, 211) if mode == "dark" else MUTED,
+            anchor="mm",
+        )
         canvas.convert("RGB").save(ASSETS / f"hero-{mode}.png", optimize=True)
 
 

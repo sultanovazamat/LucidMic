@@ -5,7 +5,7 @@ cd "$(dirname "$0")/.."
 
 scripts/fetch-deps.sh
 uv run --no-project --with-requirements requirements-dev.txt ruff format --check scripts
-xcrun swift-format lint --strict --recursive Sources Tests Package.swift
+xcrun swift-format lint --strict --recursive Sources Tests Package.swift scripts/render-menu.swift
 uv run --no-project --with-requirements requirements-dev.txt ruff check scripts
 shellcheck scripts/*.sh
 plutil -lint Resources/Info.plist

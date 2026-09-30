@@ -6,11 +6,11 @@
 
 <p align="center">
   Your voice. Minus the noise.<br>
-  Free, on-device AI noise removal for your Mac. One switch in the menu bar.
+  Free, on-device AI noise removal for your Mac. One click in the menu bar.
 </p>
 
 <p align="center">
-  <a href="https://github.com/sultanovazamat/LucidMic/releases/latest"><img alt="Release 1.0.0" src="https://img.shields.io/badge/release-1.0.0-blue"></a>
+  <a href="https://github.com/sultanovazamat/LucidMic/releases/latest"><img alt="Release 1.0.1" src="https://img.shields.io/badge/release-1.0.1-blue"></a>
   <a href="https://github.com/sultanovazamat/LucidMic/actions/workflows/ci.yml"><img alt="GitHub Actions" src="https://img.shields.io/badge/CI-GitHub_Actions-000000?logo=githubactions&logoColor=white"></a>
   <img alt="macOS 14 or later" src="https://img.shields.io/badge/macOS-14%2B-000000?logo=apple">
   <img alt="Apple silicon" src="https://img.shields.io/badge/Apple%20silicon-required-000000">
@@ -18,12 +18,12 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/sultanovazamat/LucidMic/releases/download/v1.0.0/LucidMic-1.0.0.dmg"><b>Download LucidMic for Mac</b></a>
+  <a href="https://github.com/sultanovazamat/LucidMic/releases/download/v1.0.1/LucidMic-1.0.1.dmg"><b>Download LucidMic for Mac</b></a>
 </p>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/hero-dark.png">
-  <img alt="LucidMic's menu: a noise-removal switch, launch at login, and uninstall control" src="docs/assets/hero-light.png">
+  <img alt="LucidMic menu preview: checked Noise Removal, current microphone, Settings, Help, About, and Quit" src="docs/assets/hero-light.png">
 </picture>
 
 ## Why it exists
@@ -39,10 +39,10 @@ sound reaches your call app, so you control it from one place.
 - **Works across your call apps.** Apps using the system-default input receive
   the cleaned audio. If you picked a specific microphone in an app, choose
   *LucidMic Microphone* there instead.
-- **Lets you hear the difference.** Flip the switch during a call or recording.
+- **Lets you hear the difference.** Click **Noise Removal** during a call or recording.
   Turning noise removal off passes your original audio through without
   disconnecting the virtual microphone.
-- **Stays in the menu bar.** One switch, a status line, and optional launch at
+- **Stays in the menu bar.** One menu command, a status line, and optional launch at
   login. Quitting restores your physical microphone as the default.
 - **Installs its own microphone.** Approve the driver installation once. Remove
   it later from the same menu.
@@ -60,12 +60,12 @@ sound reaches your call app, so you control it from one place.
 
 You need a Mac with Apple silicon and macOS 14 Sonoma or later.
 
-1. Download [LucidMic-1.0.0.dmg](https://github.com/sultanovazamat/LucidMic/releases/download/v1.0.0/LucidMic-1.0.0.dmg)
+1. Download [LucidMic-1.0.1.dmg](https://github.com/sultanovazamat/LucidMic/releases/download/v1.0.1/LucidMic-1.0.1.dmg)
    and drag LucidMic into Applications.
 2. Open it. LucidMic is not notarised yet, so macOS may stop the first launch.
    Open **System Settings → Privacy & Security** and click **Open Anyway**
    after trying to open the app.
-3. Click the waveform in your menu bar and turn **Noise removal** on. Allow
+3. Click the waveform in your menu bar and enable **Noise Removal**. Allow
    microphone access and approve the one-time driver installation.
 
 Install before joining a call: installing the driver restarts the macOS audio
@@ -74,13 +74,23 @@ Microphone** in their audio settings.
 
 ## Using it
 
-Everything is in the menu bar icon:
+Click the waveform in the menu bar:
 
-- **Noise removal** — cleans your voice when on; passes your original audio
-  through when off. This switch does not mute the microphone.
-- **Launch at login** — opens LucidMic when you sign in.
-- **Uninstall…** — removes the virtual microphone and restores the physical one.
-- **Quit** — stops routing and restores your physical microphone as the default.
+- **Noise Removal** — a checkmark means cleaning is on. Uncheck it to pass your
+  original audio through while keeping the virtual microphone connected.
+  This does not mute the microphone.
+- The status reads **Not running**, **Removing noise**, or **Passing original
+  audio**. While routing, the next line shows your actual input microphone.
+- **Settings…** (`⌘,`) — manage **Launch at Login** and **Remove Virtual
+  Microphone…**. Removal asks for confirmation before stopping audio routing.
+- **How to Use LucidMic** — opens a short guide that works offline.
+- **About LucidMic** — shows the app's version and information.
+- **Quit LucidMic** (`⌘Q`) — stops routing and restores your physical microphone
+  as the default.
+
+Launch at Login opens the app; noise removal starts when you enable it. Removing
+the virtual microphone leaves LucidMic installed and restarts the audio service.
+Enabling Noise Removal later sets the microphone up again.
 
 Nearby people talking and music vocals may remain: the model preserves speech
 and does not identify a particular speaker. Use headphones so your call
@@ -94,7 +104,7 @@ LucidMic does not show a Dock icon.
 
 ## How it works
 
-A native SwiftUI menu controls a C audio engine. The audio callback moves
+A native AppKit menu and SwiftUI Settings control a C audio engine. The audio callback moves
 samples through ring buffers; a worker thread runs the noise-removal model.
 A customised BlackHole driver makes the result available as a microphone.
 
@@ -118,18 +128,23 @@ With full Xcode and Swift 6 or later on an Apple silicon Mac, plus
 git clone https://github.com/sultanovazamat/LucidMic.git
 cd LucidMic
 scripts/check.sh          # pinned dependencies, format/lint, build, tests
-scripts/build.sh 1.0.0    # checked DMG, corresponding source, and checksums
+scripts/build.sh 1.0.1    # checked DMG, corresponding source, and checksums
 ```
 
 Select Xcode as your active developer directory. The build downloads pinned
 dependencies and verifies their checksums. The **Prepare release** workflow
 builds the same artifacts and creates a draft release.
 
-To regenerate the icon and installer/repository artwork:
+To regenerate the menu previews, icon, and installer/repository artwork:
 
 ```sh
+scripts/render-menu.sh
 uv run --no-project --with-requirements requirements-dev.txt python scripts/make-art.py
 ```
+
+The README images are labelled previews rendered from the real menu commands
+with a sample microphone. They illustrate the layout without recording audio;
+macOS supplies the installed app's menu appearance.
 
 For the offline file-processing tool, run `swift run lucidmic-file` to see usage.
 The source layout and release steps are in [CONTRIBUTING.md](CONTRIBUTING.md).

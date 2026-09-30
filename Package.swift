@@ -31,5 +31,6 @@ let package = Package(
         ),
         .executableTarget(name: "lucidmic-file", dependencies: ["LucidEngine"]),
         .testTarget(name: "LucidEngineTests", dependencies: ["LucidEngine"]),
+        .testTarget(name: "LucidMicUITests", dependencies: ["LucidMic"]),
     ]
 )
