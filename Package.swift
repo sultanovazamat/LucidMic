@@ -24,6 +24,7 @@ let package = Package(
                 .linkedFramework("ServiceManagement"),
             ]
         ),
+        .executableTarget(name: "lucidmic-file", dependencies: ["LucidEngine"]),
         .testTarget(name: "LucidEngineTests", dependencies: ["LucidEngine"]),
     ]
 )

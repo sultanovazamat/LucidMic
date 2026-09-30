@@ -41,7 +41,7 @@ void lucid_engine_destroy(LucidEngine *e) {
     free(e);
 }
 
-void lucid_engine_process(LucidEngine *e, const float *in, float *out, uint32_t frames) {
+static void process_block(LucidEngine *e, const float *in, float *out, uint32_t frames) {
     float denoised[kFrame];
     for (uint32_t i = 0; i < frames; ++i) {
         e->inFrame[e->inCount++] = in[i] * 32768.0f; // RNNoise works in 16-bit sample scale
@@ -62,6 +62,17 @@ void lucid_engine_process(LucidEngine *e, const float *in, float *out, uint32_t 
         out[i] = e->out[e->outRead];
         e->outRead = (e->outRead + 1) % kOutCapacity;
         e->outCount--;
+    }
+}
+
+void lucid_engine_process(LucidEngine *e, const float *in, float *out, uint32_t frames) {
+    // Chunk so the output FIFO (kOutCapacity) can never overflow, whatever the caller's block size.
+    while (frames > 0) {
+        const uint32_t n = frames < kMaxBlock ? frames : kMaxBlock;
+        process_block(e, in, out, n);
+        in += n;
+        out += n;
+        frames -= n;
     }
 }
 
